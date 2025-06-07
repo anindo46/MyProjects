@@ -1,37 +1,38 @@
+
 import streamlit as st
-import pandas as pd
-import folium
-from streamlit_folium import st_folium
+import openai
 
-st.title("🗺️ GeoSmart Tutor - Bangladesh")
+# Set your OpenAI API key securely in Streamlit (go to Settings > Secrets in Streamlit Cloud)
+openai.api_key = st.secrets["openai_key"]
 
-location = st.text_input("Enter District or Upazila:")
+st.title("ðﾟﾌﾍ GeoSmart Tutor - AI Powered")
+st.markdown("Ask for any upazila or district in Bangladesh to get geology info:")
 
+# Input field for location
+location = st.text_input("Enter a district or upazila name:")
+
+# Language selection
+language = st.selectbox("Select language:", ["English", "Bengali"])
+
+# Generate response
 if location:
-    st.subheader("📄 Geological Summary")
-    st.write(f"Geological summary for **{location}**:")
-    st.markdown("- Formation: Dupi Tila (example)")
-    st.markdown("- Age: Pleistocene")
-    st.markdown("- Lithology: Clay, silt, sand")
+    with st.spinner("Fetching geological data..."):
+        prompt = f"What is the geological formation, age, lithology, rock types, soil type, hydrogeological setting, and environmental hazards of {location}, Bangladesh? Provide a structured answer."
 
-    st.subheader("🪨 Rock / Mineral Types")
-    st.markdown("- Quartz, Feldspar, Mica")
-    st.markdown("- Sedimentary rocks")
+        if language == "Bengali":
+            prompt += " Translate the answer into Bengali."
 
-    st.subheader("⚠️ Environmental Risks")
-    st.markdown("- Flood Risk: High")
-    st.markdown("- Erosion Risk: Medium")
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-4",
+                messages=[
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            answer = response["choices"][0]["message"]["content"]
+            st.markdown(answer)
+        except Exception as e:
+            st.error(f"Failed to fetch response: {e}")
 
-    st.subheader("🛰 NDWI / Map")
-    map_center = [23.6850, 90.3563]
-    m = folium.Map(location=map_center, zoom_start=6)
-    folium.Marker(map_center, popup=location).add_to(m)
-    st_folium(m, width=700)
-
-    if st.checkbox("বাংলায় দেখুন"):
-        st.markdown("**ভূতাত্ত্বিক সারাংশ:**")
-        st.markdown("- গঠন: দূপি তিলা")
-        st.markdown("- খনিজ: কোয়ার্টজ, ফেল্ডস্পার")
-        st.markdown("- বন্যার ঝুঁকি: উচ্চ")
 else:
-    st.info("🔍 Please enter a location to begin...")
+    st.info("Enter a location to begin.")
