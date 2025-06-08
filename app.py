@@ -51,13 +51,56 @@ def label(text_en, text_bn):
     return text_en if language == "English" else text_bn
 
 # --- TOOL 1: True Dip ---
-if tool == "True Dip Calculator":
-    st.subheader(label("True Dip from Apparent Dip", "আপাত ডিপ থেকে সত্যিকারের ডিপ নির্ণয়"))
-    ad = st.number_input(label("Apparent Dip (°)", "আপাত ডিপ (ডিগ্রি)"), 0.0)
-    angle = st.number_input(label("Angle Between Directions (°)", "দিকের মধ্যকার কোণ (ডিগ্রি)"), 0.0, 90.0)
-    if st.button(label("Calculate", "হিসাব করুন")):
-        td = math.degrees(math.atan(math.tan(math.radians(ad)) / math.sin(math.radians(angle))))
-        st.success(f"{label('True Dip', 'সত্যিকারের ডিপ')} = {td:.2f}°")
+import math
+import matplotlib.pyplot as plt
+import numpy as np
+import streamlit as st
+
+# Optional bilingual label support
+def label(en, bn=None):
+    return en if bn is None else f"{en} / {bn}"
+
+st.subheader(label("True Dip from Apparent Dip", "আপাত ডিপ থেকে সত্যিকারের ডিপ নির্ণয়"))
+
+# Input values
+ad = st.number_input(label("Apparent Dip (°)", "আপাত ডিপ (ডিগ্রি)"), min_value=0.0, max_value=90.0, step=0.1)
+angle = st.number_input(label("Angle Between Directions (°)", "দিকের মধ্যকার কোণ (ডিগ্রি)"), min_value=0.0, max_value=90.0, step=0.1)
+
+if st.button(label("Calculate", "হিসাব করুন")):
+    # Calculation
+    td = math.degrees(math.atan(math.tan(math.radians(ad)) / math.sin(math.radians(angle))))
+    st.success(f"{label('True Dip', 'সত্যিকারের ডিপ')} = {td:.2f}°")
+    
+    # Formula Explanation
+    st.markdown(r"**Formula:** True Dip = tan⁻¹(tan(Apparent Dip) / sin(Angle))")
+
+    # Dynamic Triangle Plot
+    fig, ax = plt.subplots()
+    ax.set_aspect('equal')
+
+    base = 1  # unit base length
+    height = np.tan(np.radians(ad))  # apparent dip height
+
+    x_coords = [0, base, base]
+    y_coords = [0, 0, height]
+
+    # Draw triangle
+    ax.plot(x_coords + [0], y_coords + [0], 'k-', lw=2)
+    ax.fill(x_coords + [0], y_coords + [0], 'lavender', alpha=0.4)
+
+    # Labels
+    ax.text(0.5, -0.1, f"Angle = {angle:.1f}°", ha='center', fontsize=9)
+    ax.text(base + 0.1, height / 2, f"Apparent Dip = {ad:.1f}°", va='center', fontsize=9)
+    ax.text(base / 2, height + 0.1, f"True Dip = {td:.2f}°", ha='center', fontsize=10, fontweight='bold')
+
+    # Limits and remove axis
+    ax.set_xlim(-0.2, 1.6)
+    ax.set_ylim(-0.2, max(height + 0.5, 1))
+    ax.axis('off')
+
+    # Show in Streamlit
+    st.pyplot(fig)
+
 
 # --- TOOL 2: Phi Scale ---
 elif tool == "Grain Size to Phi":
