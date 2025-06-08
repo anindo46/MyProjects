@@ -35,7 +35,7 @@ def show_and_download(fig, filename="diagram.png"):
     buf = io.BytesIO()
     fig.savefig(buf, format="png", bbox_inches='tight')
     st.download_button(
-        label="ðﾟﾓﾥ Download Diagram as PNG",
+        label="Download Diagram as PNG",
         data=buf.getvalue(),
         file_name=filename,
         mime="image/png"
@@ -43,7 +43,7 @@ def show_and_download(fig, filename="diagram.png"):
 
 # --- True Dip Calculator ---
 if tool == "True Dip Calculator":
-    st.subheader("ðﾟﾓﾐ True Dip from Apparent Dip")
+    st.subheader("True Dip from Apparent Dip")
     ad = st.number_input("Apparent Dip (°)", 0.0)
     angle = st.number_input("Angle Between Directions (°)", 0.0, 90.0)
     calculate = st.button("Calculate True Dip")
@@ -67,7 +67,7 @@ if tool == "True Dip Calculator":
 
 # --- Porosity Calculator ---
 elif tool == "Porosity Calculator":
-    st.subheader("ðﾟﾪﾨ Porosity % from Volume")
+    st.subheader("Porosity % from Volume")
     pores = st.number_input("Pore Volume (cm³)", 0.0)
     total = st.number_input("Total Volume (cm³)", 0.0)
     calculate = st.button("Calculate Porosity")
@@ -90,7 +90,7 @@ elif tool == "Porosity Calculator":
 
 # --- Stratigraphic Thickness Estimator ---
 elif tool == "Stratigraphic Thickness Estimator":
-    st.subheader("ðﾟﾓﾏ Stratigraphic Thickness Estimation")
+    st.subheader("Stratigraphic Thickness Estimation")
     measured = st.number_input("Measured Thickness (m)", 0.0)
     dip = st.number_input("Dip Angle (°)", 0.0, 90.0)
     calculate = st.button("Calculate True Thickness")
@@ -133,7 +133,7 @@ elif tool == "Slope Gradient (%)":
 
 # --- Grain Size to Phi ---
 elif tool == "Grain Size to Phi":
-    st.subheader("ðﾟﾌﾾ Grain Size to Phi (φ)")
+    st.subheader("Grain Size to Phi (φ)")
     size = st.number_input("Grain Size (mm)", 0.0)
     calculate = st.button("Convert to Phi")
 
