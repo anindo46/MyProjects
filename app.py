@@ -1,51 +1,63 @@
-
 import streamlit as st
-import requests
+import math
 
-# ✅ Use a stable, public Hugging Face model
-API_URL = "https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct"
-headers = {"Authorization": f"Bearer {st.secrets['hf_api_key']}"}
+st.set_page_config(page_title="GeoLab Pro", layout="wide")
+st.title("🧪 GeoLab Pro – University Geology Toolkit")
 
-st.title("ðﾟﾌﾍ GeoSmart Tutor - Hugging Face (100% Free)")
+tool = st.sidebar.selectbox("Choose a Tool:", [
+    "True Dip Calculator",
+    "Grain Size to Phi",
+    "Porosity Calculator",
+    "Stratigraphic Thickness Estimator",
+    "Coordinate Converter (Lat ↔ UTM)"
+])
 
-# User input
-location = st.text_input("Enter a district or upazila in Bangladesh:")
-language = st.selectbox("Select Language", ["English", "Bengali"])
-
-if location:
-    with st.spinner("Generating geology information..."):
-        # Instruction prompt for the AI model
-        prompt = (
-            f"What is the geological formation, lithology, rock types, soil type, "
-            f"hydrogeological setting, and environmental hazards of {location}, Bangladesh?"
-        )
-        if language == "Bengali":
-            prompt += " Translate the full answer into Bengali."
-
-        payload = {
-            "inputs": prompt,
-            "options": {"wait_for_model": True}
-        }
-
+# 1️⃣ True Dip
+if tool == "True Dip Calculator":
+    st.header("📐 True Dip from Apparent Dip")
+    ad = st.number_input("Apparent Dip (°)", 0.0)
+    angle = st.number_input("Angle between directions (°)", 0.0, 90.0)
+    if st.button("Calculate True Dip"):
         try:
-            # Send request to Hugging Face API
-            response = requests.post(API_URL, headers=headers, json=payload)
+            td = math.degrees(math.atan(math.tan(math.radians(ad)) / math.sin(math.radians(angle))))
+            st.success(f"True Dip = {td:.2f}°")
+        except:
+            st.error("Error in calculation")
 
-            if response.status_code == 200:
-                result = response.json()
-                if isinstance(result, list) and "generated_text" in result[0]:
-                    st.markdown(result[0]['generated_text'])
-                else:
-                    st.error("⚠️ Unexpected response format. Try again.")
-            elif response.status_code == 503:
-                st.warning("ðﾟﾕﾒ Model is loading. Please wait and try again.")
-            elif response.status_code == 401:
-                st.error("❌ Unauthorized. Please check your Hugging Face API token.")
-            elif response.status_code == 404:
-                st.error("❌ Model not found. Please check the model name.")
-            else:
-                st.error(f"❌ Hugging Face API returned status {response.status_code}: {response.text}")
-        except Exception as e:
-            st.error(f"❌ Failed to fetch response: {e}")
-else:
-    st.info("ℹ️ Enter a location to get started.")
+# 2️⃣ Grain Size ↔ Phi
+elif tool == "Grain Size to Phi":
+    st.header("🔁 Grain Size to Phi Scale")
+    size = st.number_input("Grain Size (mm)", min_value=0.001)
+    if st.button("Convert to Phi"):
+        phi = -math.log2(size)
+        st.success(f"φ = {phi:.2f}")
+
+# 3️⃣ Porosity Calculator
+elif tool == "Porosity Calculator":
+    st.header("💧 Porosity from Volume")
+    volume_pores = st.number_input("Pore Volume (cm³)")
+    volume_total = st.number_input("Total Volume (cm³)")
+    if volume_total > 0 and st.button("Calculate Porosity"):
+        porosity = (volume_pores / volume_total) * 100
+        st.success(f"Porosity = {porosity:.2f}%")
+
+# 4️⃣ Stratigraphic Thickness
+elif tool == "Stratigraphic Thickness Estimator":
+    st.header("📏 Estimate True Thickness of a Bed")
+    observed_thickness = st.number_input("Measured Thickness (m)")
+    dip_angle = st.number_input("Dip Angle (°)", 0.0, 90.0)
+    if st.button("Calculate True Thickness"):
+        true_thickness = observed_thickness * math.sin(math.radians(dip_angle))
+        st.success(f"True Thickness = {true_thickness:.2f} m")
+
+# 5️⃣ Lat/Lon ↔ UTM (Simple Mock)
+elif tool == "Coordinate Converter (Lat ↔ UTM)":
+    st.header("🌐 Coordinate Converter (Basic)")
+    lat = st.number_input("Latitude")
+    lon = st.number_input("Longitude")
+    if st.button("Mock Convert to UTM"):
+        zone = int((lon + 180) / 6) + 1
+        easting = (lon + 180) * 500
+        northing = (lat + 90) * 1000
+        st.info(f"UTM Zone: {zone}")
+        st.success(f"Easting: {easting:.1f}, Northing: {northing:.1f} (Mock Values)")
