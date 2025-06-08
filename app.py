@@ -7,12 +7,21 @@ import io
 
 st.set_page_config(page_title="GeoLab Pro", layout="centered")
 
-# Logo and title
-st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/University_of_Barishal_logo.svg/800px-University_of_Barishal_logo.svg.png", width=80)
-st.markdown("## ðﾟﾧﾪ GeoLab Pro")
-st.markdown("#### A Smart Geoscience Toolkit by **Anindo Paul Sourav** | University of Barishal")
+# --- Logo and Title ---
+st.markdown(
+    """
+    <div style="display:flex; align-items:center; gap:15px;">
+        <img src="https://raw.githubusercontent.com/anindo46/MyProjects/refs/heads/main/pngwing.com.png" width="50">
+        <div>
+            <h2 style="margin:0;">GeoLab Pro</h2>
+            <p style="margin:0;">A Smart Geoscience Toolkit by <strong>Anindo Paul Sourav</strong> | University of Barishal</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True
+)
 
-tool = st.selectbox("ðﾟﾎﾯ Choose a Tool / একটি টুল বেছে নিন:", [
+# --- Tool Selector ---
+tool = st.selectbox("Choose a Tool / একটি টুল বেছে নিন:", [
     "True Dip Calculator",
     "Porosity Calculator",
     "Stratigraphic Thickness Estimator",
@@ -20,7 +29,7 @@ tool = st.selectbox("ðﾟﾎﾯ Choose a Tool / একটি টুল বে�
     "Grain Size to Phi"
 ])
 
-# Helper: Show and export figure
+# --- Helper: Show and Download Matplotlib Figure ---
 def show_and_download(fig, filename="diagram.png"):
     st.pyplot(fig)
     buf = io.BytesIO()
@@ -37,8 +46,9 @@ if tool == "True Dip Calculator":
     st.subheader("ðﾟﾓﾐ True Dip from Apparent Dip")
     ad = st.number_input("Apparent Dip (°)", 0.0)
     angle = st.number_input("Angle Between Directions (°)", 0.0, 90.0)
+    calculate = st.button("Calculate True Dip")
 
-    if st.button("Calculate True Dip"):
+    if calculate:
         td = math.degrees(math.atan(math.tan(math.radians(ad)) / math.sin(math.radians(angle))))
         st.success(f"✅ True Dip = {td:.2f}°")
         st.markdown(r"**Formula:** True Dip = tan⁻¹(tan(Apparent Dip) / sin(Angle))")
@@ -60,7 +70,9 @@ elif tool == "Porosity Calculator":
     st.subheader("ðﾟﾪﾨ Porosity % from Volume")
     pores = st.number_input("Pore Volume (cm³)", 0.0)
     total = st.number_input("Total Volume (cm³)", 0.0)
-    if total > 0 and st.button("Calculate Porosity"):
+    calculate = st.button("Calculate Porosity")
+
+    if total > 0 and calculate:
         porosity = (pores / total) * 100
         solid = total - pores
         st.success(f"✅ Porosity = {porosity:.2f}%")
@@ -76,12 +88,14 @@ elif tool == "Porosity Calculator":
         ax.get_yaxis().set_visible(False)
         show_and_download(fig, "porosity_diagram.png")
 
-# --- Stratigraphic Thickness ---
+# --- Stratigraphic Thickness Estimator ---
 elif tool == "Stratigraphic Thickness Estimator":
     st.subheader("ðﾟﾓﾏ Stratigraphic Thickness Estimation")
     measured = st.number_input("Measured Thickness (m)", 0.0)
     dip = st.number_input("Dip Angle (°)", 0.0, 90.0)
-    if dip > 0 and st.button("Calculate True Thickness"):
+    calculate = st.button("Calculate True Thickness")
+
+    if dip > 0 and calculate:
         true_thick = measured * math.sin(math.radians(dip))
         st.success(f"✅ True Thickness = {true_thick:.2f} m")
         st.markdown(r"**Formula:** T = Measured × sin(Dip)")
@@ -99,7 +113,9 @@ elif tool == "Slope Gradient (%)":
     st.subheader("⛰️ Slope Gradient (%)")
     rise = st.number_input("Vertical Rise (m)", 0.0)
     run = st.number_input("Horizontal Run (m)", 0.0)
-    if run > 0 and st.button("Calculate Slope"):
+    calculate = st.button("Calculate Slope")
+
+    if run > 0 and calculate:
         slope = (rise / run) * 100
         st.success(f"✅ Slope Gradient = {slope:.2f}%")
         st.markdown(r"**Formula:** Slope % = (Rise / Run) × 100")
@@ -119,7 +135,9 @@ elif tool == "Slope Gradient (%)":
 elif tool == "Grain Size to Phi":
     st.subheader("ðﾟﾌﾾ Grain Size to Phi (φ)")
     size = st.number_input("Grain Size (mm)", 0.0)
-    if size > 0 and st.button("Convert to Phi"):
+    calculate = st.button("Convert to Phi")
+
+    if size > 0 and calculate:
         phi = -math.log2(size)
         st.success(f"✅ φ = {phi:.2f}")
         st.markdown(r"**Formula:** φ = –log₂(Grain Size in mm)")
