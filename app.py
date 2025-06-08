@@ -98,10 +98,11 @@ elif tool == "Slope Gradient (%)":
 st.markdown("---")
 st.markdown(f'''
 <div class="footer">
-Developed by <b>Anindo Paul Sourav</b><br>
-Research Fellow, BURS<br>
+Developed by <b>Anindo Paul Sourav</b>
 Department of Geology and Mining<br>
 University of Barishal<br>
-Email: anindo@example.com | 🌐 <a href="https://github.com/yourusername">GitHub</a>
+<br>
+<a href="https://anindo46.github.io/portfolio/">MY PORTFOLIO</a><br>
+Email: anindo.glm@gmail.com | 🌐 <a href="https://github.com/anindo46">GitHub</a>
 </div>
 ''', unsafe_allow_html=True)
