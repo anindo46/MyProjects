@@ -111,13 +111,42 @@ elif tool == "Grain Size to Phi":
         st.success(f"φ = {phi:.2f}")
 
 # --- TOOL 3: Porosity ---
-elif tool == "Porosity Calculator":
+import math
+import matplotlib.pyplot as plt
+import numpy as np
+
+# POROSITY TOOL WITH DYNAMIC DIAGRAM
+if tool == "Porosity Calculator":
     st.subheader(label("Porosity % from Volume", "আয়তন থেকে পরোসিটি (%)"))
-    pores = st.number_input(label("Pore Volume (cm³)", "ছিদ্রের আয়তন (সেমি³)"))
-    total = st.number_input(label("Total Volume (cm³)", "মোট আয়তন (সেমি³)"))
+
+    pores = st.number_input(label("Pore Volume (cm³)", "ছিদ্রের আয়তন (সেমি³)"), min_value=0.0)
+    total = st.number_input(label("Total Volume (cm³)", "মোট আয়তন (সেমি³)"), min_value=0.0)
+
     if total > 0 and st.button(label("Calculate", "হিসাব করুন")):
         porosity = (pores / total) * 100
+        solid = total - pores
+
         st.success(f"{label('Porosity', 'পরোসিটি')} = {porosity:.2f}%")
+        st.markdown(r"**Formula:** Porosity = (Pore Volume / Total Volume) × 100")
+
+        # Dynamic Diagram
+        fig, ax = plt.subplots(figsize=(5, 2.5))
+        bars = ax.barh(["Sample"], [pores], color='skyblue', label="Pore Volume")
+        ax.barh(["Sample"], [solid], left=[pores], color='saddlebrown', label="Solid Volume")
+
+        ax.set_xlim(0, total * 1.1)
+        ax.set_xlabel("Volume (cm³)")
+        ax.set_title("Porosity Distribution", fontsize=11)
+
+        for i in range(len(bars)):
+            ax.text(pores / 2, i, f"Pores: {pores:.1f}", va='center', ha='center', fontsize=8, color='black')
+            ax.text(pores + solid / 2, i, f"Solids: {solid:.1f}", va='center', ha='center', fontsize=8, color='white')
+
+        ax.get_yaxis().set_visible(False)
+        ax.legend(loc='lower right')
+        ax.set_facecolor('#f8f9fa')
+        st.pyplot(fig)
+
 
 # --- TOOL 4: Thickness ---
 elif tool == "Stratigraphic Thickness Estimator":
