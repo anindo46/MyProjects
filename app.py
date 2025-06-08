@@ -1,180 +1,101 @@
+
 import streamlit as st
 import math
+import matplotlib.pyplot as plt
+import numpy as np
 
 # --- Page setup ---
-st.set_page_config(page_title="GeoLab Pro – Geology Toolkit", layout="wide")
+st.set_page_config(page_title="GeoLab Pro", layout="centered")
 
-# --- Logo + Header ---
-st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/University_of_Barishal_logo.svg/800px-University_of_Barishal_logo.svg.png", width=100)
+# --- Custom logo ---
+st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/University_of_Barishal_logo.svg/800px-University_of_Barishal_logo.svg.png", width=80)
 
-st.markdown("""
-<style>
-.big-title {
-    font-size:40px !important;
-    font-weight: bold;
-}
-.subtitle {
-    font-size:18px !important;
-    color: gray;
-}
-.footer {
-    font-size:14px !important;
-    text-align: center;
-    color: #888;
-    margin-top: 50px;
-}
-</style>
-""", unsafe_allow_html=True)
+# --- Title & credit ---
+st.markdown("## ðﾟﾧﾪ GeoLab Pro")
+st.markdown("#### Smart Geology Toolkit – Developed by **Anindo Paul Sourav** | University of Barishal")
 
-st.markdown('<div class="big-title">GeoLab Pro – Geology Toolkit</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">A Smart, Bilingual Toolkit for Geology Students</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Developed by Anindo Paul Sourav | University of Barishal</div>', unsafe_allow_html=True)
-
-st.markdown("---")
-
-# --- Language toggle ---
-language = st.radio("🌐 Choose Language / ভাষা নির্বাচন করুন:", ["English", "বাংলা"])
-
-# --- Sidebar tool selection ---
-tool = st.sidebar.selectbox("🧭 Choose a Tool / একটি টুল বেছে নিন:", [
+# --- Tool selector ---
+tool = st.selectbox("ðﾟﾎﾯ Choose a Tool / একটি টুল বেছে নিন:", [
     "True Dip Calculator",
-    "Grain Size to Phi",
     "Porosity Calculator",
     "Stratigraphic Thickness Estimator",
-    "Slope Gradient (%)"
+    "Slope Gradient (%)",
+    "Grain Size to Phi"
 ])
 
-st.markdown(f"### {tool}")
+# --- Tool: True Dip Calculator ---
+if tool == "True Dip Calculator":
+    st.subheader("ðﾟﾓﾐ True Dip from Apparent Dip / আপাত ডিপ থেকে সত্যিকারের ডিপ নির্ণয়")
+    ad = st.number_input("Apparent Dip (°) / আপাত ডিপ (ডিগ্রি)", 0.0)
+    angle = st.number_input("Angle Between Directions (°) / দিকের মধ্যকার কোণ (ডিগ্রি)", 0.0, 90.0)
 
-# --- Language helper ---
-def label(text_en, text_bn):
-    return text_en if language == "English" else text_bn
+    if st.button("Calculate True Dip"):
+        td = math.degrees(math.atan(math.tan(math.radians(ad)) / math.sin(math.radians(angle))))
+        st.success(f"✅ True Dip = {td:.2f}°")
 
-# --- TOOL 1: True Dip ---
-import math
-import matplotlib.pyplot as plt
-import numpy as np
-import streamlit as st
+        st.markdown(r"**Formula:** True Dip = tan⁻¹(tan(Apparent Dip) / sin(Angle))")
 
-# Optional bilingual label support
-def label(en, bn=None):
-    return en if bn is None else f"{en} / {bn}"
-
-st.subheader(label("True Dip from Apparent Dip", "আপাত ডিপ থেকে সত্যিকারের ডিপ নির্ণয়"))
-
-# Input values
-ad = st.number_input(label("Apparent Dip (°)", "আপাত ডিপ (ডিগ্রি)"), min_value=0.0, max_value=90.0, step=0.1)
-angle = st.number_input(label("Angle Between Directions (°)", "দিকের মধ্যকার কোণ (ডিগ্রি)"), min_value=0.0, max_value=90.0, step=0.1)
-
-if st.button(label("Calculate", "হিসাব করুন")):
-    # Calculation
-    td = math.degrees(math.atan(math.tan(math.radians(ad)) / math.sin(math.radians(angle))))
-    st.success(f"{label('True Dip', 'সত্যিকারের ডিপ')} = {td:.2f}°")
-    
-    # Formula Explanation
-    st.markdown(r"**Formula:** True Dip = tan⁻¹(tan(Apparent Dip) / sin(Angle))")
-
-    # Dynamic Triangle Plot
-    fig, ax = plt.subplots()
-    ax.set_aspect('equal')
-
-    base = 1  # unit base length
-    height = np.tan(np.radians(ad))  # apparent dip height
-
-    x_coords = [0, base, base]
-    y_coords = [0, 0, height]
-
-    # Draw triangle
-    ax.plot(x_coords + [0], y_coords + [0], 'k-', lw=2)
-    ax.fill(x_coords + [0], y_coords + [0], 'lavender', alpha=0.4)
-
-    # Labels
-    ax.text(0.5, -0.1, f"Angle = {angle:.1f}°", ha='center', fontsize=9)
-    ax.text(base + 0.1, height / 2, f"Apparent Dip = {ad:.1f}°", va='center', fontsize=9)
-    ax.text(base / 2, height + 0.1, f"True Dip = {td:.2f}°", ha='center', fontsize=10, fontweight='bold')
-
-    # Limits and remove axis
-    ax.set_xlim(-0.2, 1.6)
-    ax.set_ylim(-0.2, max(height + 0.5, 1))
-    ax.axis('off')
-
-    # Show in Streamlit
-    st.pyplot(fig)
-
-
-# --- TOOL 2: Phi Scale ---
-elif tool == "Grain Size to Phi":
-    st.subheader(label("Convert Grain Size to Phi (φ)", "শস্যের আকার থেকে ফাই (φ) নির্ণয়"))
-    size = st.number_input(label("Grain Size (mm)", "শস্যের আকার (মিমি)"), min_value=0.001)
-    if st.button(label("Convert", "রূপান্তর করুন")):
-        phi = -math.log2(size)
-        st.success(f"φ = {phi:.2f}")
-
-# --- TOOL 3: Porosity ---
-import math
-import matplotlib.pyplot as plt
-import numpy as np
-
-# POROSITY TOOL WITH DYNAMIC DIAGRAM
-if tool == "Porosity Calculator":
-    st.subheader(label("Porosity % from Volume", "আয়তন থেকে পরোসিটি (%)"))
-
-    pores = st.number_input(label("Pore Volume (cm³)", "ছিদ্রের আয়তন (সেমি³)"), min_value=0.0)
-    total = st.number_input(label("Total Volume (cm³)", "মোট আয়তন (সেমি³)"), min_value=0.0)
-
-    if total > 0 and st.button(label("Calculate", "হিসাব করুন")):
-        porosity = (pores / total) * 100
-        solid = total - pores
-
-        st.success(f"{label('Porosity', 'পরোসিটি')} = {porosity:.2f}%")
-        st.markdown(r"**Formula:** Porosity = (Pore Volume / Total Volume) × 100")
-
-        # Dynamic Diagram
-        fig, ax = plt.subplots(figsize=(5, 2.5))
-        bars = ax.barh(["Sample"], [pores], color='skyblue', label="Pore Volume")
-        ax.barh(["Sample"], [solid], left=[pores], color='saddlebrown', label="Solid Volume")
-
-        ax.set_xlim(0, total * 1.1)
-        ax.set_xlabel("Volume (cm³)")
-        ax.set_title("Porosity Distribution", fontsize=11)
-
-        for i in range(len(bars)):
-            ax.text(pores / 2, i, f"Pores: {pores:.1f}", va='center', ha='center', fontsize=8, color='black')
-            ax.text(pores + solid / 2, i, f"Solids: {solid:.1f}", va='center', ha='center', fontsize=8, color='white')
-
-        ax.get_yaxis().set_visible(False)
-        ax.legend(loc='lower right')
-        ax.set_facecolor('#f8f9fa')
+        # Draw triangle
+        fig, ax = plt.subplots()
+        ax.set_aspect('equal')
+        b = 1
+        h = np.tan(np.radians(ad))
+        x = [0, b, b]
+        y = [0, 0, h]
+        ax.plot(x + [0], y + [0], 'k-', lw=2)
+        ax.fill(x + [0], y + [0], 'lavender', alpha=0.4)
+        ax.text(0.5, -0.1, f"Angle = {angle:.1f}°", ha='center')
+        ax.text(b + 0.1, h / 2, f"Apparent = {ad}°", va='center')
+        ax.text(b / 2, h + 0.1, f"True Dip = {td:.2f}°", ha='center', fontweight='bold')
+        ax.axis('off')
         st.pyplot(fig)
 
+# --- Tool: Porosity Calculator ---
+elif tool == "Porosity Calculator":
+    st.subheader("ðﾟﾪﾨ Porosity % from Volume / আয়তন থেকে পরোসিটি (%)")
+    pores = st.number_input("Pore Volume (cm³)", min_value=0.0)
+    total = st.number_input("Total Volume (cm³)", min_value=0.0)
+    if total > 0 and st.button("Calculate Porosity"):
+        porosity = (pores / total) * 100
+        solid = total - pores
+        st.success(f"✅ Porosity = {porosity:.2f}%")
+        st.markdown(r"**Formula:** Porosity = (Pore Volume / Total Volume) × 100")
 
-# --- TOOL 4: Thickness ---
+        fig, ax = plt.subplots(figsize=(5, 2.5))
+        ax.barh(["Rock"], [pores], color='skyblue', label="Pore")
+        ax.barh(["Rock"], [solid], left=[pores], color='saddlebrown', label="Solid")
+        ax.set_xlim(0, total)
+        ax.legend(loc="lower right")
+        ax.set_facecolor('#f4f4f4')
+        ax.get_yaxis().set_visible(False)
+        ax.set_title("Porosity Distribution")
+        st.pyplot(fig)
+
+# --- Tool: Stratigraphic Thickness Estimator ---
 elif tool == "Stratigraphic Thickness Estimator":
-    st.subheader(label("Estimate True Thickness of a Bed", "একটি স্তরের প্রকৃত পুরুত্ব নির্ণয়"))
-    obs_thickness = st.number_input(label("Measured Thickness (m)", "পরিমাপকৃত পুরুত্ব (মি)"))
-    dip = st.number_input(label("Dip Angle (°)", "ডিপ কোণ (ডিগ্রি)"), 0.0, 90.0)
-    if st.button(label("Calculate", "হিসাব করুন")):
-        true_thick = obs_thickness * math.sin(math.radians(dip))
-        st.success(f"{label('True Thickness', 'প্রকৃত পুরুত্ব')} = {true_thick:.2f} m")
+    st.subheader("ðﾟﾓﾏ Stratigraphic Thickness / স্তরের প্রকৃত পুরুত্ব নির্ণয়")
+    obs = st.number_input("Measured Thickness (m)", 0.0)
+    dip = st.number_input("Dip Angle (°)", 0.0, 90.0)
+    if dip > 0 and st.button("Calculate True Thickness"):
+        true_thick = obs * math.sin(math.radians(dip))
+        st.success(f"✅ True Thickness = {true_thick:.2f} m")
+        st.markdown(r"**Formula:** T = Measured × sin(Dip)")
 
-# --- TOOL 5: Slope Gradient ---
+# --- Tool: Slope Gradient Calculator ---
 elif tool == "Slope Gradient (%)":
-    st.subheader(label("Slope Gradient", "ঢালের গ্রেডিয়েন্ট"))
-    rise = st.number_input(label("Vertical Rise (m)", "উল্লম্ব উচ্চতা (মি)"))
-    run = st.number_input(label("Horizontal Run (m)", "অনুভূমিক দূরত্ব (মি)"))
-    if run > 0 and st.button(label("Calculate", "হিসাব করুন")):
+    st.subheader("⛰️ Slope Gradient / ঢালের গ্রেডিয়েন্ট")
+    rise = st.number_input("Vertical Rise (m)", 0.0)
+    run = st.number_input("Horizontal Run (m)", 0.0)
+    if run > 0 and st.button("Calculate Slope"):
         slope = (rise / run) * 100
-        st.success(f"{label('Slope', 'ঢাল')} = {slope:.2f}%")
+        st.success(f"✅ Slope = {slope:.2f}%")
+        st.markdown(r"**Formula:** Slope % = (Rise / Run) × 100")
 
-# --- Footer ---
-st.markdown("---")
-st.markdown(f'''
-<div class="footer">
-Developed by <b>Anindo Paul Sourav</b>
-Department of Geology and Mining<br>
-University of Barishal<br>
-<br>
-<a href="https://anindo46.github.io/portfolio/">MY PORTFOLIO</a><br>
-Email: anindo.glm@gmail.com | 🌐 <a href="https://github.com/anindo46">GitHub</a>
-</div>
-''', unsafe_allow_html=True)
+# --- Tool: Grain Size to Phi ---
+elif tool == "Grain Size to Phi":
+    st.subheader("ðﾟﾌﾾ Convert Grain Size to Phi (φ) / শস্যের আকার থেকে ফাই (φ)")
+    size = st.number_input("Grain Size (mm) / শস্যের আকার (মিমি)", 0.0)
+    if size > 0 and st.button("Convert to Phi"):
+        phi = -math.log2(size)
+        st.success(f"✅ φ = {phi:.2f}")
+        st.markdown(r"**Formula:** φ = –log₂(Grain Size in mm)")
