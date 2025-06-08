@@ -1,19 +1,18 @@
-
 import streamlit as st
 import requests
 
-# Constants
+# Hugging Face API settings
 API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-base"
 headers = {"Authorization": f"Bearer {st.secrets['hf_api_key']}"}
 
-# Streamlit UI
-st.title("ðﾟﾌﾍ GeoSmart Tutor - Free with Hugging Face")
+# UI
+st.title("🌍 GeoSmart Tutor - Hugging Face (Free)")
+
 location = st.text_input("Enter a district or upazila in Bangladesh:")
 language = st.selectbox("Select Language", ["English", "Bengali"])
 
 if location:
     with st.spinner("Generating geology information..."):
-        # Prompt to the model
         prompt = (
             f"What is the geological formation, lithology, rock types, soil type, "
             f"and environmental hazards of {location} in Bangladesh?"
@@ -28,13 +27,18 @@ if location:
 
         try:
             response = requests.post(API_URL, headers=headers, json=payload)
-            result = response.json()
 
-            if isinstance(result, list):
+            # 🛡️ Improved error handling
+            if response.status_code != 200:
+                st.error(f"❌ Hugging Face API returned status {response.status_code}")
+                st.stop()
+
+            result = response.json()
+            if isinstance(result, list) and "generated_text" in result[0]:
                 st.markdown(result[0]['generated_text'])
             else:
-                st.error("⚠️ Something went wrong. Try again later or check your Hugging Face token.")
+                st.error("⚠️ Unexpected response format. Try again or check your Hugging Face key.")
         except Exception as e:
             st.error(f"❌ Failed to fetch response: {e}")
 else:
-    st.info("Enter a location to get started.")
+    st.info("ℹ️ Enter a location to get started.")
