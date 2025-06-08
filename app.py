@@ -1,32 +1,40 @@
+
 import streamlit as st
-import openai
+import requests
 
-# Securely load your OpenAI key from Streamlit secrets
-client = openai.OpenAI(api_key=st.secrets["openai_key"])
+# Constants
+API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-base"
+headers = {"Authorization": f"Bearer {st.secrets['hf_api_key']}"}
 
-st.title("🌍 GeoSmart Tutor - AI Powered")
-
-location = st.text_input("Enter a district or upazila name:")
-language = st.selectbox("Select language:", ["English", "Bengali"])
+# Streamlit UI
+st.title("ðﾟﾌﾍ GeoSmart Tutor - Free with Hugging Face")
+location = st.text_input("Enter a district or upazila in Bangladesh:")
+language = st.selectbox("Select Language", ["English", "Bengali"])
 
 if location:
-    with st.spinner("Fetching geological data..."):
+    with st.spinner("Generating geology information..."):
+        # Prompt to the model
         prompt = (
-            f"What is the geological formation, age, lithology, rock types, soil type, "
-            f"hydrogeological setting, and environmental hazards of {location}, Bangladesh? "
+            f"What is the geological formation, lithology, rock types, soil type, "
+            f"and environmental hazards of {location} in Bangladesh?"
         )
         if language == "Bengali":
-            prompt += "Translate the full answer into Bengali."
+            prompt += " Translate the response into Bengali."
+
+        payload = {
+            "inputs": prompt,
+            "options": {"wait_for_model": True}
+        }
 
         try:
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",  # or "gpt-4" if enabled
-                messages=[
-                    {"role": "user", "content": prompt}
-                ],
-            )
-            st.markdown(response.choices[0].message.content)
+            response = requests.post(API_URL, headers=headers, json=payload)
+            result = response.json()
+
+            if isinstance(result, list):
+                st.markdown(result[0]['generated_text'])
+            else:
+                st.error("⚠️ Something went wrong. Try again later or check your Hugging Face token.")
         except Exception as e:
-            st.error(f"❌ Failed to fetch response:\n\n{e}")
+            st.error(f"❌ Failed to fetch response: {e}")
 else:
-    st.info("ℹ️ Enter a location to get started.")
+    st.info("Enter a location to get started.")
