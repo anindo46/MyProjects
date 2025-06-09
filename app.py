@@ -1,197 +1,155 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Python Automation Projects – Anindo Paul Sourav</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      background: #f4f7fa;
-      color: #333;
-    }
+import streamlit as st
+import math
+import matplotlib.pyplot as plt
+import numpy as np
+import io
 
-    header {
-      background: linear-gradient(90deg, #5f27cd, #8e44ad);
-      color: white;
-      padding: 2.2rem 1rem;
-      text-align: center;
-      animation: fadeInDown 0.8s ease-out;
-    }
+st.set_page_config(page_title="GeoLab Pro", layout="wide", page_icon="🧪")
 
-    header h1 {
-      margin: 0;
-      font-size: 2.4rem;
-    }
+# --- Sidebar ---
+st.sidebar.title("🧪 GeoLab Pro")
+st.sidebar.info("A Smart Geoscience Toolkit by Anindo Paul Sourav\n\nUniversity of Barishal")
+st.sidebar.markdown("---")
+st.sidebar.caption("🔍 Choose a tool from the selector below")
 
-    header p {
-      font-size: 1.15rem;
-      margin-top: 10px;
-      opacity: 0.95;
-    }
-
-    .credit-tag {
-      font-weight: 500;
-      font-size: 1rem;
-      background: linear-gradient(to right, #f8ff00, #3ad59f);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-top: 0.5rem;
-    }
-
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      padding: 2rem 1.2rem;
-      animation: fadeInUp 0.9s ease-in-out;
-    }
-
-    .card {
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-      overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .card:hover {
-      transform: scale(1.015);
-      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
-    }
-
-    .card img {
-      width: 100%;
-      max-height: 340px;
-      object-fit: contain;
-      display: block;
-      background: #f9f9f9;
-      padding: 8px;
-      transition: transform 0.4s ease;
-    }
-
-    .card:hover img {
-      transform: scale(1.02);
-    }
-
-    .card-content {
-      padding: 24px;
-    }
-
-    .card-content h3 {
-      font-size: 1.7rem;
-      color: #2c3e50;
-      margin-bottom: 0.6rem;
-    }
-
-    .card-content p {
-      font-size: 1.05rem;
-      color: #444;
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
-
-    .example-box {
-      background: #f6f9ff;
-      border-left: 5px solid #8e44ad;
-      padding: 12px 16px;
-      margin-bottom: 18px;
-      border-radius: 6px;
-      font-size: 0.95rem;
-    }
-
-    .card-content a.launch {
-      display: inline-block;
-      padding: 12px 24px;
-      font-size: 1rem;
-      font-weight: bold;
-      color: white;
-      background: linear-gradient(135deg, #7b2ff7, #f107a3);
-      border-radius: 25px;
-      text-decoration: none;
-      box-shadow: 0 6px 14px rgba(123, 47, 247, 0.25);
-      transition: all 0.3s ease;
-    }
-
-    .card-content a.launch:hover {
-      transform: scale(1.06);
-      filter: brightness(1.1);
-      box-shadow: 0 10px 24px rgba(123, 47, 247, 0.3);
-    }
-
-    footer {
-      background: #1a1a1a;
-      color: #ccc;
-      text-align: center;
-      padding: 1.7rem 1rem;
-      margin-top: 3rem;
-      animation: fadeIn 1s ease-in;
-      font-size: 0.95rem;
-    }
-
-    footer a {
-      color: #00ccff;
-      text-decoration: none;
-    }
-
-    @keyframes fadeInDown {
-      0% {opacity: 0; transform: translateY(-20px);}
-      100% {opacity: 1; transform: translateY(0);}
-    }
-
-    @keyframes fadeInUp {
-      0% {opacity: 0; transform: translateY(30px);}
-      100% {opacity: 1; transform: translateY(0);}
-    }
-
-    @keyframes fadeIn {
-      0% {opacity: 0;}
-      100% {opacity: 1;}
-    }
-  </style>
-</head>
-<body>
-
-  <header>
-    <h1>Python Automation Projects</h1>
-    <p>Streamlined tools for geology, GIS & scientific workflow</p>
-    <div class="credit-tag">By Anindo Paul Sourav</div>
-  </header>
-
-  <div class="container">
-    <div class="card">
-      <img src="https://raw.githubusercontent.com/anindo46/MyProjects/refs/heads/main/ss.png" alt="GeoLab Pro Interface">
-      <div class="card-content">
-        <h3>GeoLab Pro – Smart Geological Calculator</h3>
-        <p><strong>GeoLab Pro</strong> is a Streamlit-powered bilingual (Bangla + English) app built for geoscience professionals and students. It automates key geology tasks like True Dip, Porosity, Stratigraphic Thickness, and Grain Size conversion — all in one web-based toolkit.</p>
-
-        <div class="example-box">
-          <strong>🧪 Example:</strong> Calculate True Dip<br>
-          Apparent Dip = 30°, Angle = 60°<br>
-          ➤ <strong>True Dip = 33.69°</strong><br>
-          <small>Formula: tan⁻¹(tan(Apparent Dip) / sin(Angle))</small>
+# --- Title and Credit ---
+st.markdown("""
+    <style>
+        .title-bar { display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+        .title-bar img { width: 50px; }
+        .title-bar h2 { margin: 0; }
+        .credit { font-size: 14px; color: gray; margin-top: -10px; }
+    </style>
+    <div class="title-bar">
+        <img src="https://raw.githubusercontent.com/anindo46/MyProjects/refs/heads/main/pngwing.com.png">
+        <div>
+            <h2>GeoLab Pro</h2>
+            <p class="credit">Developed by Anindo Paul Sourav – Student, Geology and Mining, University of Barishal</p>
         </div>
-
-        <div class="example-box">
-          <strong>📘 How to Use:</strong><br>
-          ▸ Choose calculator → Input values → View results instantly<br>
-          ▸ All outputs are interactive and mobile-friendly
-        </div>
-
-        <a href="https://geolabpro.streamlit.app/" class="launch" target="_blank">🚀 Launch GeoLab Pro</a>
-      </div>
     </div>
-  </div>
+""", unsafe_allow_html=True)
 
-  <footer>
-    <p><strong>Anindo Paul Sourav</strong> — Research Fellow, BURS<br>
-    Dept. of Geology and Mining, University of Barishal</p>
-    <p>
-      📧 <a href="mailto:anindo.glm@gmail.com">anindo.glm@gmail.com</a> | 
-      ☎️ <a href="tel:+8801701026866">+8801701026866</a> | 
-      🌐 <a href="https://github.com/anindo46" target="_blank">GitHub</a>
-    </p>
-  </footer>
+# --- Tool Selector ---
+tool = st.selectbox("Choose a Tool / একটি টুল বেছে নিন:", [
+    "True Dip Calculator",
+    "Porosity Calculator",
+    "Stratigraphic Thickness Estimator",
+    "Slope Gradient (%)",
+    "Grain Size to Phi"
+])
 
-</body>
-</html>
+# --- Helper: Show and Download Matplotlib Figure ---
+def show_and_download(fig, filename="diagram.png"):
+    st.pyplot(fig)
+    buf = io.BytesIO()
+    fig.savefig(buf, format="png", bbox_inches='tight')
+    st.download_button(
+        label="📥 Download Diagram as PNG",
+        data=buf.getvalue(),
+        file_name=filename,
+        mime="image/png"
+    )
+
+# --- True Dip Calculator ---
+if tool == "True Dip Calculator":
+    st.subheader("🧭 True Dip from Apparent Dip")
+    ad = st.number_input("Apparent Dip (°)", 0.0)
+    angle = st.number_input("Angle Between Directions (°)", 0.0, 90.0)
+    calculate = st.button("🔍 Calculate")
+    if calculate:
+        td = math.degrees(math.atan(math.tan(math.radians(ad)) / math.sin(math.radians(angle))))
+        st.success(f"✅ True Dip = {td:.2f}°")
+        st.markdown(r"**Formula:** True Dip = tan⁻¹(tan(Apparent Dip) / sin(Angle))")
+
+        fig, ax = plt.subplots()
+        ax.set_aspect('equal')
+        b, h = 1, np.tan(np.radians(ad))
+        x, y = [0, b, b], [0, 0, h]
+        ax.plot(x + [0], y + [0], 'k-', lw=2)
+        ax.fill(x + [0], y + [0], 'lavender', alpha=0.5)
+        ax.text(0.5, -0.1, f"Angle = {angle}°", ha='center')
+        ax.text(b+0.1, h/2, f"Apparent = {ad}°", va='center')
+        ax.text(b/2, h+0.1, f"True Dip = {td:.2f}°", ha='center', fontweight='bold')
+        ax.axis('off')
+        show_and_download(fig, "true_dip_diagram.png")
+
+# --- Porosity Calculator ---
+elif tool == "Porosity Calculator":
+    st.subheader("🪨 Porosity % from Volume")
+    pores = st.number_input("Pore Volume (cm³)", 0.0)
+    total = st.number_input("Total Volume (cm³)", 0.0)
+    calculate = st.button("🔍 Calculate")
+    if total > 0 and calculate:
+        porosity = (pores / total) * 100
+        solid = total - pores
+        st.success(f"✅ Porosity = {porosity:.2f}%")
+        st.markdown(r"**Formula:** Porosity = (Pore Volume / Total Volume) × 100")
+
+        fig, ax = plt.subplots(figsize=(5, 2.5))
+        ax.barh(["Rock"], [pores], color='skyblue', label="Pores")
+        ax.barh(["Rock"], [solid], left=[pores], color='saddlebrown', label="Solids")
+        ax.set_xlim(0, total)
+        ax.legend(loc="lower right")
+        ax.set_title("Pore vs Solid Distribution")
+        ax.set_facecolor('#f4f4f4')
+        ax.get_yaxis().set_visible(False)
+        show_and_download(fig, "porosity_diagram.png")
+
+# --- Stratigraphic Thickness Estimator ---
+elif tool == "Stratigraphic Thickness Estimator":
+    st.subheader("📏 Stratigraphic Thickness Estimation")
+    measured = st.number_input("Measured Thickness (m)", 0.0)
+    dip = st.number_input("Dip Angle (°)", 0.0, 90.0)
+    calculate = st.button("🔍 Calculate")
+    if dip > 0 and calculate:
+        true_thick = measured * math.sin(math.radians(dip))
+        st.success(f"✅ True Thickness = {true_thick:.2f} m")
+        st.markdown(r"**Formula:** T = Measured × sin(Dip)")
+
+        fig, ax = plt.subplots()
+        ax.plot([0, 1], [0, measured], 'saddlebrown', lw=3, label='Measured')
+        ax.plot([0, 1], [0, true_thick], 'limegreen', lw=3, label='True')
+        ax.legend()
+        ax.set_title("Measured vs. True Thickness")
+        ax.set_ylabel("Thickness (m)")
+        show_and_download(fig, "stratigraphy_diagram.png")
+
+# --- Slope Gradient ---
+elif tool == "Slope Gradient (%)":
+    st.subheader("⛰️ Slope Gradient (%)")
+    rise = st.number_input("Vertical Rise (m)", 0.0)
+    run = st.number_input("Horizontal Run (m)", 0.0)
+    calculate = st.button("🔍 Calculate")
+    if run > 0 and calculate:
+        slope = (rise / run) * 100
+        st.success(f"✅ Slope Gradient = {slope:.2f}%")
+        st.markdown(r"**Formula:** Slope % = (Rise / Run) × 100")
+
+        fig, ax = plt.subplots()
+        ax.plot([0, run], [0, 0], 'k--')
+        ax.plot([0, run], [0, rise], 'b-', lw=2)
+        ax.fill([0, run, run], [0, 0, rise], color='skyblue', alpha=0.3)
+        ax.text(run/2, rise/2, f"{slope:.1f}%", fontsize=10, ha='center')
+        ax.set_xlim(0, run+1)
+        ax.set_ylim(0, rise+1)
+        ax.set_title("Slope Profile")
+        ax.axis('off')
+        show_and_download(fig, "slope_diagram.png")
+
+# --- Grain Size to Phi ---
+elif tool == "Grain Size to Phi":
+    st.subheader("🌾 Grain Size to Phi (φ)")
+    size = st.number_input("Grain Size (mm)", 0.0)
+    calculate = st.button("🔍 Calculate")
+    if size > 0 and calculate:
+        phi = -math.log2(size)
+        st.success(f"✅ φ = {phi:.2f}")
+        st.markdown(r"**Formula:** φ = –log₂(Grain Size in mm)")
+
+        fig, ax = plt.subplots()
+        ax.plot([size], [phi], marker='o', markersize=10, color='crimson')
+        ax.set_xlabel("Grain Size (mm)")
+        ax.set_ylabel("Phi (φ)")
+        ax.set_title("Grain Size → φ Scale")
+        ax.grid(True)
+        show_and_download(fig, "phi_diagram.png")
