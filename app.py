@@ -1,24 +1,33 @@
-
 import streamlit as st
 import math
 import matplotlib.pyplot as plt
 import numpy as np
 import io
 
-st.set_page_config(page_title="GeoLab Pro", layout="centered")
+st.set_page_config(page_title="GeoLab Pro", layout="wide", page_icon="🧪")
 
-# --- Logo and Title ---
-st.markdown(
-    """
-    <div style="display:flex; align-items:center; gap:15px;">
-        <img src="https://raw.githubusercontent.com/anindo46/MyProjects/refs/heads/main/pngwing.com.png" width="50">
+# --- Sidebar ---
+st.sidebar.title("🧪 GeoLab Pro")
+st.sidebar.info("A Smart Geoscience Toolkit by Anindo Paul Sourav\n\nUniversity of Barishal")
+st.sidebar.markdown("---")
+st.sidebar.caption("🔍 Choose a tool from the selector below")
+
+# --- Title and Credit ---
+st.markdown("""
+    <style>
+        .title-bar { display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+        .title-bar img { width: 50px; }
+        .title-bar h2 { margin: 0; }
+        .credit { font-size: 14px; color: gray; margin-top: -10px; }
+    </style>
+    <div class="title-bar">
+        <img src="https://raw.githubusercontent.com/anindo46/MyProjects/refs/heads/main/pngwing.com.png">
         <div>
-            <h2 style="margin:0;">GeoLab Pro</h2>
-            <p style="margin:0;">A Smart Geoscience Toolkit by <strong>Anindo Paul Sourav</strong> | University of Barishal</p>
+            <h2>GeoLab Pro</h2>
+            <p class="credit">Developed by Anindo Paul Sourav – Student, Geology and Mining, University of Barishal</p>
         </div>
     </div>
-    """, unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
 
 # --- Tool Selector ---
 tool = st.selectbox("Choose a Tool / একটি টুল বেছে নিন:", [
@@ -35,7 +44,7 @@ def show_and_download(fig, filename="diagram.png"):
     buf = io.BytesIO()
     fig.savefig(buf, format="png", bbox_inches='tight')
     st.download_button(
-        label="Download Diagram as PNG",
+        label="📥 Download Diagram as PNG",
         data=buf.getvalue(),
         file_name=filename,
         mime="image/png"
@@ -43,12 +52,10 @@ def show_and_download(fig, filename="diagram.png"):
 
 # --- True Dip Calculator ---
 if tool == "True Dip Calculator":
-    st.subheader("True Dip from Apparent Dip")
+    st.subheader("🧭 True Dip from Apparent Dip")
     ad = st.number_input("Apparent Dip (°)", 0.0)
     angle = st.number_input("Angle Between Directions (°)", 0.0, 90.0)
-    calculate = st.button("Calculate True Dip")
-
-    if calculate:
+    if st.button("Calculate True Dip"):
         td = math.degrees(math.atan(math.tan(math.radians(ad)) / math.sin(math.radians(angle))))
         st.success(f"✅ True Dip = {td:.2f}°")
         st.markdown(r"**Formula:** True Dip = tan⁻¹(tan(Apparent Dip) / sin(Angle))")
@@ -67,12 +74,10 @@ if tool == "True Dip Calculator":
 
 # --- Porosity Calculator ---
 elif tool == "Porosity Calculator":
-    st.subheader("Porosity % from Volume")
+    st.subheader("🪨 Porosity % from Volume")
     pores = st.number_input("Pore Volume (cm³)", 0.0)
     total = st.number_input("Total Volume (cm³)", 0.0)
-    calculate = st.button("Calculate Porosity")
-
-    if total > 0 and calculate:
+    if total > 0 and st.button("Calculate Porosity"):
         porosity = (pores / total) * 100
         solid = total - pores
         st.success(f"✅ Porosity = {porosity:.2f}%")
@@ -90,12 +95,10 @@ elif tool == "Porosity Calculator":
 
 # --- Stratigraphic Thickness Estimator ---
 elif tool == "Stratigraphic Thickness Estimator":
-    st.subheader("Stratigraphic Thickness Estimation")
+    st.subheader("📏 Stratigraphic Thickness Estimation")
     measured = st.number_input("Measured Thickness (m)", 0.0)
     dip = st.number_input("Dip Angle (°)", 0.0, 90.0)
-    calculate = st.button("Calculate True Thickness")
-
-    if dip > 0 and calculate:
+    if dip > 0 and st.button("Calculate True Thickness"):
         true_thick = measured * math.sin(math.radians(dip))
         st.success(f"✅ True Thickness = {true_thick:.2f} m")
         st.markdown(r"**Formula:** T = Measured × sin(Dip)")
@@ -113,9 +116,7 @@ elif tool == "Slope Gradient (%)":
     st.subheader("⛰️ Slope Gradient (%)")
     rise = st.number_input("Vertical Rise (m)", 0.0)
     run = st.number_input("Horizontal Run (m)", 0.0)
-    calculate = st.button("Calculate Slope")
-
-    if run > 0 and calculate:
+    if run > 0 and st.button("Calculate Slope"):
         slope = (rise / run) * 100
         st.success(f"✅ Slope Gradient = {slope:.2f}%")
         st.markdown(r"**Formula:** Slope % = (Rise / Run) × 100")
@@ -133,11 +134,9 @@ elif tool == "Slope Gradient (%)":
 
 # --- Grain Size to Phi ---
 elif tool == "Grain Size to Phi":
-    st.subheader("Grain Size to Phi (φ)")
+    st.subheader("🌾 Grain Size to Phi (φ)")
     size = st.number_input("Grain Size (mm)", 0.0)
-    calculate = st.button("Convert to Phi")
-
-    if size > 0 and calculate:
+    if size > 0 and st.button("Convert to Phi"):
         phi = -math.log2(size)
         st.success(f"✅ φ = {phi:.2f}")
         st.markdown(r"**Formula:** φ = –log₂(Grain Size in mm)")
