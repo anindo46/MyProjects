@@ -24,12 +24,28 @@ st.markdown("""
             animation: fadeInUp 1.5s ease-out;
         }
 
-        .logo-section img {
+        .logo {
             width: 150px;
             height: 150px;
-            animation: zoomIn 1s ease-out;
+            animation: rotateLogo 3s ease-in-out infinite;
         }
 
+        @keyframes rotateLogo {
+            0% {
+                transform: rotate(0deg);
+                opacity: 0.5;
+            }
+            50% {
+                transform: rotate(180deg);
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(360deg);
+                opacity: 0.5;
+            }
+        }
+
+        /* Title Section */
         .title-bar { 
             text-align: center;
             margin-top: 20px;
@@ -124,7 +140,7 @@ st.markdown("""
 # --- Logo Section (Animated) ---
 st.markdown("""
     <div class="logo-section">
-        <img src="https://raw.githubusercontent.com/anindo46/MyProjects/refs/heads/main/pngwing.com.png" alt="GeoLab Logo">
+        <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" stroke="black" stroke-width="2" fill="green" /></svg>
     </div>
 """, unsafe_allow_html=True)
 
@@ -141,6 +157,17 @@ st.sidebar.title("🧪 GeoLab Pro")
 st.sidebar.info("A Smart Geoscience Toolkit by Anindo Paul Sourav\n\nUniversity of Barishal")
 st.sidebar.markdown("---")
 st.sidebar.caption("🔍 Choose a tool from the selector below")
+
+# --- Personal Information in Sidebar ---
+st.sidebar.markdown("### About Me")
+st.sidebar.markdown("""
+    - **Name**: Anindo Paul Sourav
+    - **Field**: Geology and Mining, University of Barishal
+    - **Email**: [anindo.glm@gmail.com](mailto:anindo.glm@gmail.com)
+    - **Portfolio**: [My Portfolio](https://anindo46.github.io/portfolio/)
+    - **Phone**: (+880) 1701026866
+    - **LinkedIn**: [Anindo LinkedIn](https://www.linkedin.com/in/anindo046/)
+""")
 
 # --- Title and Credit Section Below ---
 st.markdown("""
@@ -230,6 +257,8 @@ def show_and_download(fig, filename="diagram.png"):
         file_name=filename,
         mime="image/png"
     )
+
+# --- Continue with Tool Logic (Stereonet Plotter, True Dip Calculator, etc.)
 
 # --- Stereonet Plotter ---
 if tool == "Stereonet Plotter":
