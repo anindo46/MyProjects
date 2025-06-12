@@ -17,11 +17,23 @@ st.markdown("""
             animation: fadeIn 1s ease-out;
         }
 
-        /* Centered Title Styling */
-        .title-bar { 
+        /* Logo Section Styling */
+        .logo-section { 
             text-align: center;
             margin-top: 50px;
-            animation: fadeInUp 1s ease-out;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        .logo-section img {
+            width: 150px;
+            height: 150px;
+            animation: zoomIn 1s ease-out;
+        }
+
+        .title-bar { 
+            text-align: center;
+            margin-top: 20px;
+            animation: fadeInUp 1.5s ease-out;
         }
         
         .title-bar h2 { 
@@ -42,7 +54,7 @@ st.markdown("""
         .welcome-section {
             text-align: center;
             padding: 50px;
-            margin-top: 80px;
+            margin-top: 30px;
             animation: fadeInUp 2s ease-out;
         }
 
@@ -107,6 +119,13 @@ st.markdown("""
             to { transform: translateX(0); }
         }
     </style>
+""", unsafe_allow_html=True)
+
+# --- Logo Section (Animated) ---
+st.markdown("""
+    <div class="logo-section">
+        <img src="https://raw.githubusercontent.com/anindo46/MyProjects/refs/heads/main/pngwing.com.png" alt="GeoLab Logo">
+    </div>
 """, unsafe_allow_html=True)
 
 # --- Welcome Section ---
@@ -248,3 +267,132 @@ if tool == "Stereonet Plotter":
         show_and_download(fig, "stereonet_plot.png")
 
 # --- Continue with other tools (True Dip Calculator, Porosity Calculator, etc.)
+# --- True Dip Calculator ---
+if tool == "True Dip Calculator":
+    st.subheader("🧭 True Dip from Apparent Dip")
+    
+    # Input Fields
+    ad = st.number_input("Apparent Dip (°)", min_value=0.0, max_value=90.0, step=0.1)
+    angle = st.number_input("Angle Between Directions (°)", min_value=0.0, max_value=90.0, step=0.1)
+    
+    calculate = st.button("🔍 Calculate True Dip")
+    
+    if calculate:
+        # Calculation of True Dip
+        td = math.degrees(math.atan(math.tan(math.radians(ad)) / math.sin(math.radians(angle))))
+        st.success(f"✅ True Dip = {td:.2f}°")
+        st.markdown(r"**Formula:** True Dip = tan⁻¹(tan(Apparent Dip) / sin(Angle))")
+        
+        # Plotting Diagram
+        fig, ax = plt.subplots(figsize=(6, 6))
+        ax.set_aspect('equal')
+        b, h = 1, np.tan(np.radians(ad))
+        x, y = [0, b, b], [0, 0, h]
+        ax.plot(x + [0], y + [0], 'k-', lw=2)
+        ax.fill(x + [0], y + [0], 'lavender', alpha=0.5)
+        ax.text(0.5, -0.1, f"Angle = {angle}°", ha='center')
+        ax.text(b+0.1, h/2, f"Apparent = {ad}°", va='center')
+        ax.text(b/2, h+0.1, f"True Dip = {td:.2f}°", ha='center', fontweight='bold')
+        ax.axis('off')
+        show_and_download(fig, "true_dip_diagram.png")
+
+# --- Porosity Calculator ---
+elif tool == "Porosity Calculator":
+    st.subheader("🪨 Porosity % from Volume")
+    
+    # Input Fields
+    pores = st.number_input("Pore Volume (cm³)", min_value=0.0)
+    total = st.number_input("Total Volume (cm³)", min_value=0.0)
+    
+    calculate = st.button("🔍 Calculate Porosity")
+    
+    if calculate and total > 0:
+        porosity = (pores / total) * 100
+        solid = total - pores
+        st.success(f"✅ Porosity = {porosity:.2f}%")
+        st.markdown(r"**Formula:** Porosity = (Pore Volume / Total Volume) × 100")
+        
+        # Plotting Porosity Distribution
+        fig, ax = plt.subplots(figsize=(5, 2.5))
+        ax.barh(["Rock"], [pores], color='skyblue', label="Pores")
+        ax.barh(["Rock"], [solid], left=[pores], color='saddlebrown', label="Solids")
+        ax.set_xlim(0, total)
+        ax.legend(loc="lower right")
+        ax.set_title("Pore vs Solid Distribution")
+        ax.set_facecolor('#f4f4f4')
+        ax.get_yaxis().set_visible(False)
+        show_and_download(fig, "porosity_diagram.png")
+
+# --- Stratigraphic Thickness Estimator ---
+elif tool == "Stratigraphic Thickness Estimator":
+    st.subheader("📏 Stratigraphic Thickness Estimation")
+    
+    # Input Fields
+    measured = st.number_input("Measured Thickness (m)", min_value=0.0)
+    dip = st.number_input("Dip Angle (°)", min_value=0.0, max_value=90.0)
+    
+    calculate = st.button("🔍 Calculate True Thickness")
+    
+    if calculate and dip > 0:
+        true_thick = measured * math.sin(math.radians(dip))
+        st.success(f"✅ True Thickness = {true_thick:.2f} m")
+        st.markdown(r"**Formula:** True Thickness = Measured × sin(Dip)")
+        
+        # Plotting Thickness Diagram
+        fig, ax = plt.subplots(figsize=(6, 3))
+        ax.plot([0, 1], [0, measured], 'saddlebrown', lw=3, label='Measured')
+        ax.plot([0, 1], [0, true_thick], 'limegreen', lw=3, label='True')
+        ax.legend()
+        ax.set_title("Measured vs True Thickness")
+        ax.set_ylabel("Thickness (m)")
+        show_and_download(fig, "stratigraphy_diagram.png")
+
+# --- Slope Gradient (%) ---
+elif tool == "Slope Gradient (%)":
+    st.subheader("⛰️ Slope Gradient (%)")
+    
+    # Input Fields
+    rise = st.number_input("Vertical Rise (m)", min_value=0.0)
+    run = st.number_input("Horizontal Run (m)", min_value=0.0)
+    
+    calculate = st.button("🔍 Calculate Slope Gradient")
+    
+    if calculate and run > 0:
+        slope = (rise / run) * 100
+        st.success(f"✅ Slope Gradient = {slope:.2f}%")
+        st.markdown(r"**Formula:** Slope % = (Rise / Run) × 100")
+        
+        # Plotting Slope Profile
+        fig, ax = plt.subplots(figsize=(6, 6))
+        ax.plot([0, run], [0, 0], 'k--')
+        ax.plot([0, run], [0, rise], 'b-', lw=2)
+        ax.fill([0, run, run], [0, 0, rise], color='skyblue', alpha=0.3)
+        ax.text(run/2, rise/2, f"{slope:.1f}%", fontsize=12, ha='center')
+        ax.set_xlim(0, run + 5)
+        ax.set_ylim(0, rise + 5)
+        ax.set_title("Slope Profile")
+        ax.axis('off')
+        show_and_download(fig, "slope_diagram.png")
+
+# --- Grain Size to Phi ---
+elif tool == "Grain Size to Phi":
+    st.subheader("🌾 Grain Size to Phi (φ)")
+    
+    # Input Fields
+    size = st.number_input("Grain Size (mm)", min_value=0.0)
+    
+    calculate = st.button("🔍 Calculate Phi (φ)")
+    
+    if calculate and size > 0:
+        phi = -math.log2(size)
+        st.success(f"✅ φ = {phi:.2f}")
+        st.markdown(r"**Formula:** φ = -log₂(Grain Size in mm)")
+        
+        # Plotting Grain Size vs Phi
+        fig, ax = plt.subplots(figsize=(6, 4))
+        ax.plot([size], [phi], marker='o', markersize=10, color='crimson')
+        ax.set_xlabel("Grain Size (mm)")
+        ax.set_ylabel("Phi (φ)")
+        ax.set_title("Grain Size → φ Scale")
+        ax.grid(True)
+        show_and_download(fig, "phi_diagram.png")
