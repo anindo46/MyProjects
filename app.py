@@ -40,6 +40,65 @@ tool = st.selectbox("Choose a Tool / একটি টুল বেছে নি�
     "Stereonet Plotter"
 ])
 
+# --- Sidebar Descriptions ---
+st.sidebar.markdown("### Tool Descriptions")
+
+# True Dip Calculator Description
+if tool == "True Dip Calculator":
+    st.sidebar.markdown("""
+    **True Dip Calculator** / **ট্রু ডিপ ক্যালকুলেটর**:
+    - This tool calculates the true dip of a geological plane when the apparent dip and the angle between directions are given.
+    - **Example**: If the apparent dip of a plane is 30° and the angle between directions is 45°, the tool will calculate the true dip.
+    - **Usage**: Useful for structural geology, measuring the true angle of rock layers.
+    """)
+
+# Porosity Calculator Description
+elif tool == "Porosity Calculator":
+    st.sidebar.markdown("""
+    **Porosity Calculator** / **পোরোসিটি ক্যালকুলেটর**:
+    - This tool calculates the porosity percentage of a rock sample given the pore volume and the total volume.
+    - **Example**: If a rock sample has 50 cm³ of pore space and a total volume of 100 cm³, the porosity will be 50%.
+    - **Usage**: Commonly used in petrology, hydrogeology, and reservoir engineering.
+    """)
+
+# Stratigraphic Thickness Estimator Description
+elif tool == "Stratigraphic Thickness Estimator":
+    st.sidebar.markdown("""
+    **Stratigraphic Thickness Estimator** / **স্ট্র্যাটিগ্রাফিক থিকনেস এসটিমেটর**:
+    - This tool helps estimate the true thickness of a stratigraphic layer based on the measured thickness and dip angle.
+    - **Example**: If the measured thickness of a layer is 50 meters and the dip angle is 30°, the true thickness will be calculated.
+    - **Usage**: Useful for geological mapping and resource estimation.
+    """)
+
+# Slope Gradient Description
+elif tool == "Slope Gradient (%)":
+    st.sidebar.markdown("""
+    **Slope Gradient (%)** / **স্লোপ গ্রেডিয়েন্ট (%)**:
+    - This tool calculates the gradient of a slope (as a percentage) using the vertical rise and horizontal run.
+    - **Example**: If the vertical rise is 10 meters and the horizontal run is 50 meters, the slope gradient will be 20%.
+    - **Usage**: This tool is used in geomorphology, civil engineering, and environmental studies.
+    """)
+
+# Grain Size to Phi Description
+elif tool == "Grain Size to Phi":
+    st.sidebar.markdown("""
+    **Grain Size to Phi (φ)** / **গ্রেইন সাইজ থেকে ফি (φ)**:
+    - This tool calculates the phi (φ) scale of a grain size in millimeters.
+    - **Example**: If a grain size is 2 mm, the phi value will be calculated as φ = -log₂(2) = 1.
+    - **Usage**: Used in sedimentology to classify grain sizes for particle size analysis.
+    """)
+
+# Stereonet Plotter Description
+elif tool == "Stereonet Plotter":
+    st.sidebar.markdown("""
+    **Stereonet Plotter** / **স্টেরিওনেট প্লটার**:
+    - This tool allows you to plot planes and lines on a stereonet by entering the strike & dip for planes and trend & plunge for lines.
+    - **Example**: 
+      - Strike = 30°, Dip = 45° for a plane.
+      - Trend = 90°, Plunge = 30° for a line.
+    - The plot will show the relationships between these structures, useful for structural geology and fault/fold analysis.
+    """)
+
 # --- Helper: Show and Download Matplotlib Figure ---
 def show_and_download(fig, filename="diagram.png"):
     st.pyplot(fig)
@@ -57,13 +116,6 @@ if tool == "Stereonet Plotter":
     st.subheader("🧭 Stereonet Plotter")
     
     # Input Fields
-    st.sidebar.markdown("### Stereonet Plotter Instructions")
-    st.sidebar.markdown("""
-    - **Strike & Dip**: Enter the strike (0-360°) and dip (0-90°) angles for a plane.
-    - **Trend & Plunge**: Enter the trend (0-360°) and plunge (0-90°) for a line.
-    - You can rotate and contour poles to visualize complex geological structures.
-    """)
-    
     strike_plane = st.number_input("Strike of Plane (°)", 0.0, 360.0)
     dip_plane = st.number_input("Dip of Plane (°)", 0.0, 90.0)
     trend_line = st.number_input("Trend of Line (°)", 0.0, 360.0)
