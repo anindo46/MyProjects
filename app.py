@@ -7,6 +7,97 @@ from mpl_toolkits.mplot3d import Axes3D
 
 st.set_page_config(page_title="GeoLab Pro", layout="wide", page_icon="🧪")
 
+# --- Custom CSS for Premium Animation and Style ---
+st.markdown("""
+    <style>
+        /* General Styling */
+        body { 
+            font-family: 'Arial', sans-serif; 
+            background-color: #f4f4f4;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        .title-bar { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            margin-bottom: 10px; 
+            animation: slideIn 1s ease-out;
+        }
+        
+        .title-bar img { 
+            width: 50px; 
+            animation: zoomIn 1s ease-out;
+        }
+        
+        .title-bar h2 { 
+            margin: 0; 
+            font-family: 'Arial', sans-serif; 
+            color: #333;
+        }
+        
+        .credit { 
+            font-size: 14px; 
+            color: gray; 
+            margin-top: -10px; 
+            font-family: 'Arial', sans-serif; 
+        }
+        
+        /* Button Hover Effect */
+        .stButton, .stSelectbox, .stSlider {
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        
+        .stButton:hover { 
+            background-color: #4CAF50; 
+            transform: scale(1.1);
+        }
+        
+        .stSelectbox select:hover, .stSlider:hover {
+            transform: scale(1.05);
+        }
+
+        /* Card Hover Effects */
+        .stButton, .card {
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .stButton:hover, .card:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Fade-in and Zoom-in Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Parallax Scrolling Effect */
+        .parallax {
+            background: url('https://raw.githubusercontent.com/anindo46/MyProjects/refs/heads/main/pngwing.com.png') no-repeat fixed;
+            height: 300px;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        /* Styling for Sidebar */
+        .sidebar .sidebar-content { padding: 20px; background-color: #f7f7f7; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
+
+    </style>
+""", unsafe_allow_html=True)
+
 # --- Sidebar ---
 st.sidebar.title("🧪 GeoLab Pro")
 st.sidebar.info("A Smart Geoscience Toolkit by Anindo Paul Sourav\n\nUniversity of Barishal")
@@ -15,25 +106,6 @@ st.sidebar.caption("🔍 Choose a tool from the selector below")
 
 # --- Title and Credit ---
 st.markdown("""
-    <style>
-        .title-bar { display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
-        .title-bar img { width: 50px; }
-        .title-bar h2 { margin: 0; font-family: 'Arial', sans-serif; }
-        .credit { font-size: 14px; color: gray; margin-top: -10px; font-family: 'Arial', sans-serif; }
-        .button {transition: transform 0.3s ease; border-radius: 12px; background-color: #4CAF50;}
-        .button:hover {transform: scale(1.1);}
-        .sidebar .sidebar-content { padding: 20px; background-color: #f7f7f7;}
-        body { font-family: 'Arial', sans-serif; background-color: #f4f4f4; }
-        .stSelectbox, .stButton { transition: all 0.3s ease; }
-        .stButton:hover { background-color: #45a049; transform: scale(1.1); }
-        .stSelectbox select {transition: all 0.3s ease; font-size: 16px;}
-        .stTextInput input {transition: all 0.3s ease; font-size: 14px;}
-        .stSlider {transition: all 0.3s ease;}
-        .stRadio {transition: all 0.3s ease;}
-        .stMarkdown { font-size: 18px; font-weight: bold; }
-        .card { border-radius: 10px; transition: all 0.3s ease; }
-        .card:hover { transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    </style>
     <div class="title-bar">
         <img src="https://raw.githubusercontent.com/anindo46/MyProjects/refs/heads/main/pngwing.com.png">
         <div>
