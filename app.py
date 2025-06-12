@@ -32,19 +32,30 @@ st.markdown("""
 
 # --- Tool Selector ---
 tool = st.selectbox("Choose a Tool / একটি টুল বেছে নিন:", [
+    "Stereonet Plotter",  # Moved this to the first position
     "True Dip Calculator",
     "Porosity Calculator",
     "Stratigraphic Thickness Estimator",
     "Slope Gradient (%)",
-    "Grain Size to Phi",
-    "Stereonet Plotter"
+    "Grain Size to Phi"
 ])
 
 # --- Sidebar Descriptions ---
 st.sidebar.markdown("### Tool Descriptions")
 
+# Stereonet Plotter Description
+if tool == "Stereonet Plotter":
+    st.sidebar.markdown("""
+    **Stereonet Plotter** / **স্টেরিওনেট প্লটার**:
+    - This tool allows you to plot planes and lines on a stereonet by entering the strike & dip for planes and trend & plunge for lines.
+    - **Example**: 
+      - Strike = 30°, Dip = 45° for a plane.
+      - Trend = 90°, Plunge = 30° for a line.
+    - The plot will show the relationships between these structures, useful for structural geology and fault/fold analysis.
+    """)
+
 # True Dip Calculator Description
-if tool == "True Dip Calculator":
+elif tool == "True Dip Calculator":
     st.sidebar.markdown("""
     **True Dip Calculator** / **ট্রু ডিপ ক্যালকুলেটর**:
     - This tool calculates the true dip of a geological plane when the apparent dip and the angle between directions are given.
@@ -86,17 +97,6 @@ elif tool == "Grain Size to Phi":
     - This tool calculates the phi (φ) scale of a grain size in millimeters.
     - **Example**: If a grain size is 2 mm, the phi value will be calculated as φ = -log₂(2) = 1.
     - **Usage**: Used in sedimentology to classify grain sizes for particle size analysis.
-    """)
-
-# Stereonet Plotter Description
-elif tool == "Stereonet Plotter":
-    st.sidebar.markdown("""
-    **Stereonet Plotter** / **স্টেরিওনেট প্লটার**:
-    - This tool allows you to plot planes and lines on a stereonet by entering the strike & dip for planes and trend & plunge for lines.
-    - **Example**: 
-      - Strike = 30°, Dip = 45° for a plane.
-      - Trend = 90°, Plunge = 30° for a line.
-    - The plot will show the relationships between these structures, useful for structural geology and fault/fold analysis.
     """)
 
 # --- Helper: Show and Download Matplotlib Figure ---
