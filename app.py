@@ -260,6 +260,8 @@ def show_and_download(fig, filename="diagram.png"):
 
 # --- Continue with Tool Logic (Stereonet Plotter, True Dip Calculator, etc.)
 
+# --- Continue with Tool Logic (Stereonet Plotter, True Dip Calculator, etc.)
+
 # --- Stereonet Plotter ---
 if tool == "Stereonet Plotter":
     st.subheader("🧭 Stereonet Plotter")
