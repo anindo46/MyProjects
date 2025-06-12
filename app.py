@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import io
 from mpl_toolkits.mplot3d import Axes3D
+import plotly.graph_objects as go
+import plotly.express as px
 
 st.set_page_config(page_title="GeoLab Pro", layout="wide", page_icon="🧪")
 
@@ -20,6 +22,9 @@ st.markdown("""
         .title-bar img { width: 50px; }
         .title-bar h2 { margin: 0; }
         .credit { font-size: 14px; color: gray; margin-top: -10px; }
+        .button {transition: transform 0.3s ease; border-radius: 12px; background-color: #4CAF50;}
+        .button:hover {transform: scale(1.1);}
+        .title-bar, .credit {font-family: 'Arial', sans-serif;}
     </style>
     <div class="title-bar">
         <img src="https://raw.githubusercontent.com/anindo46/MyProjects/refs/heads/main/pngwing.com.png">
