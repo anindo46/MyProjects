@@ -134,6 +134,14 @@ st.sidebar.markdown("""
     - **LinkedIn**: [Anindo LinkedIn](https://www.linkedin.com/in/anindo046/)
 """)
 
+# --- Title and Credit Section Below ---
+st.markdown("""
+    <div class="title-bar">
+        <h2>GeoLab Pro</h2>
+        <p class="credit">Developed by Anindo Paul Sourav – Student, Geology and Mining, University of Barishal</p>
+    </div>
+""", unsafe_allow_html=True)
+
 # --- Tool Selector ---
 tool = st.selectbox("Choose a Tool / একটি টুল বেছে নিন:", [
     "Stereonet Plotter",  # Moved this to the first position
@@ -156,6 +164,7 @@ if tool == "Stereonet Plotter":
       - Strike = 30°, Dip = 45° for a plane.
       - Trend = 90°, Plunge = 30° for a line.
     - The plot will show the relationships between these structures, useful for structural geology and fault/fold analysis.
+    - **How to Use**: Enter the strike, dip, trend, and plunge values in degrees to generate a stereonet plot.
     """)
 
 # True Dip Calculator Description
@@ -165,6 +174,7 @@ elif tool == "True Dip Calculator":
     - This tool calculates the true dip of a geological plane when the apparent dip and the angle between directions are given.
     - **Example**: If the apparent dip of a plane is 30° and the angle between directions is 45°, the tool will calculate the true dip.
     - **Usage**: Useful for structural geology, measuring the true angle of rock layers.
+    - **How to Use**: Enter the apparent dip and angle between directions in degrees to calculate the true dip.
     """)
 
 # Porosity Calculator Description
@@ -174,6 +184,7 @@ elif tool == "Porosity Calculator":
     - This tool calculates the porosity percentage of a rock sample given the pore volume and the total volume.
     - **Example**: If a rock sample has 50 cm³ of pore space and a total volume of 100 cm³, the porosity will be 50%.
     - **Usage**: Commonly used in petrology, hydrogeology, and reservoir engineering.
+    - **How to Use**: Enter the pore volume and total volume in cubic centimeters to calculate porosity.
     """)
 
 # Stratigraphic Thickness Estimator Description
@@ -183,6 +194,7 @@ elif tool == "Stratigraphic Thickness Estimator":
     - This tool helps estimate the true thickness of a stratigraphic layer based on the measured thickness and dip angle.
     - **Example**: If the measured thickness of a layer is 50 meters and the dip angle is 30°, the true thickness will be calculated.
     - **Usage**: Useful for geological mapping and resource estimation.
+    - **How to Use**: Enter the measured thickness and dip angle in degrees to calculate the true thickness.
     """)
 
 # Slope Gradient Description
@@ -192,6 +204,7 @@ elif tool == "Slope Gradient (%)":
     - This tool calculates the gradient of a slope (as a percentage) using the vertical rise and horizontal run.
     - **Example**: If the vertical rise is 10 meters and the horizontal run is 50 meters, the slope gradient will be 20%.
     - **Usage**: This tool is used in geomorphology, civil engineering, and environmental studies.
+    - **How to Use**: Enter the vertical rise and horizontal run in meters to calculate the slope gradient.
     """)
 
 # Grain Size to Phi Description
@@ -201,6 +214,7 @@ elif tool == "Grain Size to Phi":
     - This tool calculates the phi (φ) scale of a grain size in millimeters.
     - **Example**: If a grain size is 2 mm, the phi value will be calculated as φ = -log₂(2) = 1.
     - **Usage**: Used in sedimentology to classify grain sizes for particle size analysis.
+    - **How to Use**: Enter the grain size in millimeters to calculate the phi value.
     """)
 
 # --- Helper: Show and Download Matplotlib Figure ---
@@ -216,19 +230,15 @@ def show_and_download(fig, filename="diagram.png"):
     )
 
 # --- Continue with Tool Logic (Stereonet Plotter, True Dip Calculator, etc.)
-# --- Continue with Tool Logic (Stereonet Plotter, True Dip Calculator, etc.)
-
-# --- Continue with Tool Logic (Stereonet Plotter, True Dip Calculator, etc.)
-
 # --- Stereonet Plotter ---
 if tool == "Stereonet Plotter":
     st.subheader("🧭 Stereonet Plotter")
     
     # Input Fields
-    strike_plane = st.number_input("Strike of Plane (°)", 0.0, 360.0)
-    dip_plane = st.number_input("Dip of Plane (°)", 0.0, 90.0)
-    trend_line = st.number_input("Trend of Line (°)", 0.0, 360.0)
-    plunge_line = st.number_input("Plunge of Line (°)", 0.0, 90.0)
+    strike_plane = st.number_input("Strike of Plane (°)", min_value=0.0, max_value=360.0)
+    dip_plane = st.number_input("Dip of Plane (°)", min_value=0.0, max_value=90.0)
+    trend_line = st.number_input("Trend of Line (°)", min_value=0.0, max_value=360.0)
+    plunge_line = st.number_input("Plunge of Line (°)", min_value=0.0, max_value=90.0)
     
     calculate = st.button("🔍 Plot Stereonet")
     
@@ -255,9 +265,8 @@ if tool == "Stereonet Plotter":
         # Show and download plot
         show_and_download(fig, "stereonet_plot.png")
 
-# --- Continue with other tools (True Dip Calculator, Porosity Calculator, etc.)
 # --- True Dip Calculator ---
-if tool == "True Dip Calculator":
+elif tool == "True Dip Calculator":
     st.subheader("🧭 True Dip from Apparent Dip")
     
     # Input Fields
