@@ -3,6 +3,7 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 import io
+from mpl_toolkits.mplot3d import Axes3D
 
 st.set_page_config(page_title="GeoLab Pro", layout="wide", page_icon="🧪")
 
@@ -35,7 +36,8 @@ tool = st.selectbox("Choose a Tool / একটি টুল বেছে নি�
     "Porosity Calculator",
     "Stratigraphic Thickness Estimator",
     "Slope Gradient (%)",
-    "Grain Size to Phi"
+    "Grain Size to Phi",
+    "Stereonet Plotter"
 ])
 
 # --- Helper: Show and Download Matplotlib Figure ---
@@ -50,8 +52,50 @@ def show_and_download(fig, filename="diagram.png"):
         mime="image/png"
     )
 
+# --- Stereonet Plotter ---
+if tool == "Stereonet Plotter":
+    st.subheader("🧭 Stereonet Plotter")
+    
+    # Input Fields
+    st.sidebar.markdown("### Stereonet Plotter Instructions")
+    st.sidebar.markdown("""
+    - **Strike & Dip**: Enter the strike (0-360°) and dip (0-90°) angles for a plane.
+    - **Trend & Plunge**: Enter the trend (0-360°) and plunge (0-90°) for a line.
+    - You can rotate and contour poles to visualize complex geological structures.
+    """)
+    
+    strike_plane = st.number_input("Strike of Plane (°)", 0.0, 360.0)
+    dip_plane = st.number_input("Dip of Plane (°)", 0.0, 90.0)
+    trend_line = st.number_input("Trend of Line (°)", 0.0, 360.0)
+    plunge_line = st.number_input("Plunge of Line (°)", 0.0, 90.0)
+    
+    calculate = st.button("🔍 Plot Stereonet")
+    
+    if calculate:
+        # Convert input to radians for plotting
+        strike_plane_rad = math.radians(strike_plane)
+        dip_plane_rad = math.radians(dip_plane)
+        trend_line_rad = math.radians(trend_line)
+        plunge_line_rad = math.radians(plunge_line)
+        
+        # Plot the Stereonet
+        fig = plt.figure(figsize=(7, 7))
+        ax = fig.add_subplot(111, projection='polar')
+        
+        # Plot Plane
+        ax.plot([strike_plane_rad, strike_plane_rad + math.pi], [dip_plane_rad, dip_plane_rad], label='Plane', color='b')
+        
+        # Plot Line
+        ax.plot([trend_line_rad, trend_line_rad + math.pi], [plunge_line_rad, plunge_line_rad], label='Line', color='r')
+        
+        ax.set_title("Stereonet Plot")
+        ax.legend()
+        
+        # Show and download plot
+        show_and_download(fig, "stereonet_plot.png")
+
 # --- True Dip Calculator ---
-if tool == "True Dip Calculator":
+elif tool == "True Dip Calculator":
     st.subheader("🧭 True Dip from Apparent Dip")
     ad = st.number_input("Apparent Dip (°)", 0.0)
     angle = st.number_input("Angle Between Directions (°)", 0.0, 90.0)
