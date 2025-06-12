@@ -17,34 +17,6 @@ st.markdown("""
             animation: fadeIn 1s ease-out;
         }
 
-        /* Logo Section Styling */
-        .logo-section { 
-            text-align: center;
-            margin-top: 50px;
-            animation: fadeInUp 1.5s ease-out;
-        }
-
-        .logo {
-            width: 150px;
-            height: 150px;
-            animation: rotateLogo 3s ease-in-out infinite;
-        }
-
-        @keyframes rotateLogo {
-            0% {
-                transform: rotate(0deg);
-                opacity: 0.5;
-            }
-            50% {
-                transform: rotate(180deg);
-                opacity: 1;
-            }
-            100% {
-                transform: rotate(360deg);
-                opacity: 0.5;
-            }
-        }
-
         /* Title Section */
         .title-bar { 
             text-align: center;
@@ -137,13 +109,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Logo Section (Animated) ---
-st.markdown("""
-    <div class="logo-section">
-        <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" stroke="black" stroke-width="2" fill="green" /></svg>
-    </div>
-""", unsafe_allow_html=True)
-
 # --- Welcome Section ---
 st.markdown("""
     <div class="welcome-section">
@@ -168,14 +133,6 @@ st.sidebar.markdown("""
     - **Phone**: (+880) 1701026866
     - **LinkedIn**: [Anindo LinkedIn](https://www.linkedin.com/in/anindo046/)
 """)
-
-# --- Title and Credit Section Below ---
-st.markdown("""
-    <div class="title-bar">
-        <h2>GeoLab Pro</h2>
-        <p class="credit">Developed by Anindo Paul Sourav – Student, Geology and Mining, University of Barishal</p>
-    </div>
-""", unsafe_allow_html=True)
 
 # --- Tool Selector ---
 tool = st.selectbox("Choose a Tool / একটি টুল বেছে নিন:", [
@@ -258,6 +215,7 @@ def show_and_download(fig, filename="diagram.png"):
         mime="image/png"
     )
 
+# --- Continue with Tool Logic (Stereonet Plotter, True Dip Calculator, etc.)
 # --- Continue with Tool Logic (Stereonet Plotter, True Dip Calculator, etc.)
 
 # --- Continue with Tool Logic (Stereonet Plotter, True Dip Calculator, etc.)
