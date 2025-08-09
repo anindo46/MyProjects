@@ -3,69 +3,131 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 import io
-from mpl_toolkits.mplot3d import Axes3D
 from streamlit_lottie import st_lottie
 import requests
 
-# --- Page Config ---
+# --------- PAGE CONFIG -----------
 st.set_page_config(
     page_title="GeoLab Pro | By Anindo Paul Sourav",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
     page_icon="🧪"
 )
 
-# --- Load Lottie helper ---
+# --------- LOAD LOTTIE -----------
+
 def load_lottie_url(url):
-    r = requests.get(url)
-    if r.status_code != 200:
+    try:
+        r = requests.get(url)
+        if r.status_code != 200:
+            return None
+        return r.json()
+    except:
         return None
-    return r.json()
 
-# --- Sidebar ---
-with st.sidebar:
-    st.image("https://raw.githubusercontent.com/anindo46/MyProjects/refs/heads/main/pngwing.com.png", width=120)
-    st.markdown("### 🧪 GeoLab Pro")
-    st.caption("By **Anindo Paul Sourav**  \nStudent, Geology and Mining, University of Barishal")
-    st.markdown("---")
-    
-    tool = st.selectbox("📦 Choose a Tool", [
-        "📊 MIA Tool",  # Your new MIA tool, first in list
-        "🧭 Stereonet Plotter",
-        "🧭 True Dip Calculator",
-        "🪨 Porosity Calculator",
-        "📏 Stratigraphic Thickness Estimator",
-        "⛰️ Slope Gradient (%)",
-        "🌾 Grain Size to Phi"
-    ])
+# --------- FOOTER FUNCTION ---------
 
-    st.markdown("---")
+def footer():
     st.markdown("""
-    <p style='font-size:14px; color:#666;'>💡 Tip: Enter required inputs and generate your diagrams easily.</p>
-    """, unsafe_allow_html=True)
-
-# --- Homepage ---
-def display_home():
-    col1, col2 = st.columns([1, 2])
-    with col1:
-        lottie = load_lottie_url("https://assets10.lottiefiles.com/packages/lf20_w98qte06.json")
-        if lottie:
-            st_lottie(lottie, speed=1, loop=True, height=250)
-        else:
-            st.image("https://raw.githubusercontent.com/anindo46/MyProjects/refs/heads/main/pngwing.com.png", width=200)
-    with col2:
-        st.markdown("<h1 style='color:#4B8BBE;'>Welcome to GeoLab Pro</h1>", unsafe_allow_html=True)
-        st.markdown("""
-        <p style='font-size:18px;'>Your smart geoscience toolkit for advanced structural and sedimentological analysis.</p>
-        <ul>
-            <li>📥 Upload data and input parameters easily</li>
-            <li>📊 Generate interactive plots and calculations</li>
-            <li>📂 Export results as images or reports</li>
-        </ul>
+        <style>
+            footer {
+                visibility: visible;
+                text-align: center;
+                padding: 10px 0px;
+                color: #888888;
+                font-size: 12px;
+            }
+        </style>
+        <footer>
+            Developed with ❤️ by <b>Anindo Paul Sourav</b> — University of Barishal
+        </footer>
         """, unsafe_allow_html=True)
-    st.success("👈 Select a tool from the sidebar to get started!")
 
-# --- Helper: Show and Download Matplotlib Figure ---
+# --------- SIDEBAR -----------
+
+with st.sidebar:
+    st.image("https://raw.githubusercontent.com/anindo46/MyProjects/refs/heads/main/pngwing.com.png", width=100)
+    st.markdown("### GeoLab Pro")
+    st.caption("Smart Geoscience Toolkit")
+    st.markdown("---")
+
+# --------- MODULE LIST -----------
+
+MODULES = {
+    "📊 MIA Tool": "MIA Tool module coming soon...",
+    "🧭 Stereonet Plotter": "Stereonet Plotter UI",
+    "🧭 True Dip Calculator": "True Dip Calculator UI",
+    "🪨 Porosity Calculator": "Porosity Calculator UI",
+    "📏 Stratigraphic Thickness Estimator": "Stratigraphic Thickness UI",
+    "⛰️ Slope Gradient (%)": "Slope Gradient UI",
+    "🌾 Grain Size to Phi": "Grain Size to Phi UI"
+}
+
+# --------- HOMEPAGE WITH MODULE SELECTOR -----------
+
+def display_home():
+    st.markdown(
+        """
+        <style>
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+            gap: 3rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .left-section {
+            flex: 1;
+            max-width: 350px;
+        }
+        .right-section {
+            flex: 1;
+            max-width: 500px;
+        }
+        h1 {
+            color: #1F77B4;
+            font-weight: 700;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        p.lead {
+            font-size: 1.25rem;
+            color: #333333;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        .select-container {
+            margin-top: 2rem;
+        }
+        .stSelectbox > div {
+            background-color: #f0f4f8;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #0B3954;
+        }
+        </style>
+        """, unsafe_allow_html=True
+    )
+
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        lottie_json = load_lottie_url("https://assets2.lottiefiles.com/packages/lf20_jcikwtux.json")
+        if lottie_json:
+            st_lottie(lottie_json, speed=1, loop=True, height=350)
+        else:
+            st.image("https://raw.githubusercontent.com/anindo46/MyProjects/refs/heads/main/pngwing.com.png", width=300)
+    with col2:
+        st.markdown("<h1>Welcome to GeoLab Pro</h1>", unsafe_allow_html=True)
+        st.markdown('<p class="lead">A comprehensive and professional geoscience toolkit, crafted for students and researchers. <br> Choose your desired module below to begin.</p>', unsafe_allow_html=True)
+        selected_module = st.selectbox("📦 Select a Module to Start", list(MODULES.keys()), index=0, key="module_select_home")
+        st.markdown("<br>", unsafe_allow_html=True)
+        return selected_module
+
+# --------- HELPER: SHOW & DOWNLOAD PLOT -----------
+
 def show_and_download(fig, filename="diagram.png"):
     st.pyplot(fig)
     buf = io.BytesIO()
@@ -77,13 +139,13 @@ def show_and_download(fig, filename="diagram.png"):
         mime="image/png"
     )
 
-# --- Tools routing ---
+# --------- TOOL UIs -----------
 
-if tool == "📊 MIA Tool":
+def mia_tool():
     st.subheader("📊 MIA Tool")
-    st.info("MIA Tool module will be added here.")  # Placeholder for your MIA tool code
+    st.info("MIA Tool module coming soon!")
 
-elif tool == "🧭 Stereonet Plotter":
+def stereonet_plotter():
     st.subheader("🧭 Stereonet Plotter")
     
     strike_plane = st.number_input("Strike of Plane (°)", 0.0, 360.0)
@@ -110,7 +172,7 @@ elif tool == "🧭 Stereonet Plotter":
         
         show_and_download(fig, "stereonet_plot.png")
 
-elif tool == "🧭 True Dip Calculator":
+def true_dip_calculator():
     st.subheader("🧭 True Dip from Apparent Dip")
     ad = st.number_input("Apparent Dip (°)", 0.0)
     angle = st.number_input("Angle Between Directions (°)", 0.0, 90.0)
@@ -132,7 +194,7 @@ elif tool == "🧭 True Dip Calculator":
         ax.axis('off')
         show_and_download(fig, "true_dip_diagram.png")
 
-elif tool == "🪨 Porosity Calculator":
+def porosity_calculator():
     st.subheader("🪨 Porosity % from Volume")
     pores = st.number_input("Pore Volume (cm³)", 0.0)
     total = st.number_input("Total Volume (cm³)", 0.0)
@@ -153,7 +215,7 @@ elif tool == "🪨 Porosity Calculator":
         ax.get_yaxis().set_visible(False)
         show_and_download(fig, "porosity_diagram.png")
 
-elif tool == "📏 Stratigraphic Thickness Estimator":
+def stratigraphic_thickness_estimator():
     st.subheader("📏 Stratigraphic Thickness Estimation")
     measured = st.number_input("Measured Thickness (m)", 0.0)
     dip = st.number_input("Dip Angle (°)", 0.0, 90.0)
@@ -171,7 +233,7 @@ elif tool == "📏 Stratigraphic Thickness Estimator":
         ax.set_ylabel("Thickness (m)")
         show_and_download(fig, "stratigraphy_diagram.png")
 
-elif tool == "⛰️ Slope Gradient (%)":
+def slope_gradient():
     st.subheader("⛰️ Slope Gradient (%)")
     rise = st.number_input("Vertical Rise (m)", 0.0)
     run = st.number_input("Horizontal Run (m)", 0.0)
@@ -192,7 +254,7 @@ elif tool == "⛰️ Slope Gradient (%)":
         ax.axis('off')
         show_and_download(fig, "slope_diagram.png")
 
-elif tool == "🌾 Grain Size to Phi":
+def grain_size_to_phi():
     st.subheader("🌾 Grain Size to Phi (φ)")
     size = st.number_input("Grain Size (mm)", 0.0)
     calculate = st.button("🔍 Calculate")
@@ -209,5 +271,12 @@ elif tool == "🌾 Grain Size to Phi":
         ax.grid(True)
         show_and_download(fig, "phi_diagram.png")
 
-else:
-    display_home()
+# --------- MAIN -----------
+
+def main():
+    selected_module = display_home()
+    
+    # Clear screen when module selected (simulate page switch)
+    if selected_module:
+        st.markdown("---")
+        # Run selected module
