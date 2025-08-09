@@ -1,6 +1,8 @@
 streamlit
-streamlit-lottie
-ternary
-matplotlib
+pandas
 numpy
+matplotlib
+plotly
+plotly-express
 requests
+openai
