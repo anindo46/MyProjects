@@ -1,5 +1,6 @@
 streamlit
+streamlit-lottie
+ternary
 matplotlib
 numpy
-streamlit-lottie
 requests
