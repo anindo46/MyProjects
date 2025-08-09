@@ -42,13 +42,6 @@ def footer():
         </footer>
         """, unsafe_allow_html=True)
 
-# --------- SIDEBAR -----------
-with st.sidebar:
-    st.image("https://raw.githubusercontent.com/anindo46/MyProjects/refs/heads/main/pngwing.com.png", width=120)
-    st.markdown("### GeoLab Pro")
-    st.caption("Smart Geoscience Toolkit")
-    st.markdown("---")
-
 # --------- MODULE LIST -----------
 MODULES = {
     "📊 MIA Tool": "mia_tool",
@@ -266,32 +259,59 @@ def display_home():
         st.markdown("<h1>Welcome to GeoLab Pro</h1>", unsafe_allow_html=True)
         st.markdown('<p class="lead">A comprehensive and professional geoscience toolkit, crafted for students and researchers.<br> Choose your desired module below to begin.</p>', unsafe_allow_html=True)
         selected_module = st.selectbox("📦 Select a Module to Start", list(MODULES.keys()), index=0, key="module_select_home")
-        return selected_module
+        start_button = st.button("➡️ Start")
+        if start_button:
+            st.session_state["selected_module"] = MODULES[selected_module]
+    return None
+
+# --------- SIDEBAR MODULE UI -----------
+
+def sidebar_module_ui():
+    st.sidebar.title("🔧 GeoLab Pro Modules")
+    selected_mod_key = None
+    # Find key from session state module code
+    for k, v in MODULES.items():
+        if v == st.session_state["selected_module"]:
+            selected_mod_key = k
+            break
+    # Module selector in sidebar to switch module
+    new_selection = st.sidebar.selectbox("Switch Module", list(MODULES.keys()), index=list(MODULES.keys()).index(selected_mod_key))
+    if MODULES[new_selection] != st.session_state["selected_module"]:
+        st.session_state["selected_module"] = MODULES[new_selection]
+    
+    st.sidebar.markdown("---")
+    if st.sidebar.button("🏠 Back to Home"):
+        del st.session_state["selected_module"]
+
+    # Show the selected module UI here
+    module = st.session_state["selected_module"]
+    if module == "mia_tool":
+        mia_tool()
+    elif module == "stereonet_plotter":
+        stereonet_plotter()
+    elif module == "true_dip_calculator":
+        true_dip_calculator()
+    elif module == "porosity_calculator":
+        porosity_calculator()
+    elif module == "stratigraphic_thickness_estimator":
+        stratigraphic_thickness_estimator()
+    elif module == "slope_gradient":
+        slope_gradient()
+    elif module == "grain_size_to_phi":
+        grain_size_to_phi()
 
 # --------- MAIN -----------
 def main():
-    st.title("")  # clear default top title for clean look
+    # Initialize session state for module if not exists
+    if "selected_module" not in st.session_state:
+        st.session_state["selected_module"] = None
 
-    selected_module = display_home()
-
-    st.markdown("---")
-
-    # Call the right tool based on selection
-    if selected_module:
-        if MODULES[selected_module] == "mia_tool":
-            mia_tool()
-        elif MODULES[selected_module] == "stereonet_plotter":
-            stereonet_plotter()
-        elif MODULES[selected_module] == "true_dip_calculator":
-            true_dip_calculator()
-        elif MODULES[selected_module] == "porosity_calculator":
-            porosity_calculator()
-        elif MODULES[selected_module] == "stratigraphic_thickness_estimator":
-            stratigraphic_thickness_estimator()
-        elif MODULES[selected_module] == "slope_gradient":
-            slope_gradient()
-        elif MODULES[selected_module] == "grain_size_to_phi":
-            grain_size_to_phi()
+    if st.session_state["selected_module"] is None:
+        # Show homepage with module selector
+        display_home()
+    else:
+        # Show sidebar with module UI and hide homepage content
+        sidebar_module_ui()
 
     footer()
 
