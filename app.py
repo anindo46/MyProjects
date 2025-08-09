@@ -349,7 +349,7 @@ def display_homepage():
     </style>
     """, unsafe_allow_html=True)
 
-    lottie_earth_logo = load_lottie_url("https://assets10.lottiefiles.com/packages/lf20_3ntisyuc.json")
+    lottie_earth_logo = load_lottie_url("https://assets9.lottiefiles.com/packages/lf20_iv4dsx3q.json")
 
     col1, col2 = st.columns([1, 2], gap="large")
     with col1:
