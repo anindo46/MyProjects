@@ -4,10 +4,8 @@ import io
 import requests
 import numpy as np
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 from streamlit_lottie import st_lottie
-
-# Import the custom tool from the separate module file
-from qfl_mia_tool import create_qfl_plot
 
 # --- PAGE CONFIGURATION ---
 # Set up the page layout, title, and icon. This should be the first Streamlit command.
@@ -60,6 +58,87 @@ def create_download_button(fig, filename: str):
         file_name=filename,
         mime="image/png"
     )
+
+def create_qfl_plot(q: float, f: float, l: float):
+    """
+    Creates an interactive QFL ternary plot using Plotly.
+
+    Args:
+        q (float): Percentage of Quartz.
+        f (float): Percentage of Feldspar.
+        l (float): Percentage of Lithic fragments.
+
+    Returns:
+        plotly.graph_objects.Figure: The ternary plot figure.
+    """
+    # Normalize the data point
+    total = q + f + l
+    q_norm, f_norm, l_norm = q / total, f / total, l / total
+
+    # Create the base ternary figure
+    fig = go.Figure()
+
+    # Add classification fields as filled polygons based on Pettijohn (1975)
+    # Note: Plotly ternary plots are on a scale of 0-1, not 0-100.
+    fig.add_trace(go.Scatterternary({
+        'mode': 'lines', 'a': [0.95, 1, 0.95], 'b': [0.05, 0, 0], 'c': [0, 0, 0.05],
+        'fill': 'toself', 'fillcolor': 'rgba(255, 228, 181, 0.5)', 'line': {'color': 'rgba(0,0,0,0)'},
+        'name': 'Quartz Arenite', 'hoverinfo': 'name'
+    }))
+    fig.add_trace(go.Scatterternary({
+        'mode': 'lines', 'a': [0.75, 0.95, 0.95, 0.75], 'b': [0.25, 0.05, 0, 0], 'c': [0, 0, 0.05, 0.25],
+        'fill': 'toself', 'fillcolor': 'rgba(240, 230, 140, 0.5)', 'line': {'color': 'rgba(0,0,0,0)'},
+        'name': 'Subarkose', 'hoverinfo': 'name'
+    }))
+    fig.add_trace(go.Scatterternary({
+        'mode': 'lines', 'a': [0.75, 0.95, 0.95, 0.75], 'b': [0, 0, 0.05, 0.25], 'c': [0.25, 0.05, 0, 0],
+        'fill': 'toself', 'fillcolor': 'rgba(189, 183, 107, 0.5)', 'line': {'color': 'rgba(0,0,0,0)'},
+        'name': 'Sublitharenite', 'hoverinfo': 'name'
+    }))
+    fig.add_trace(go.Scatterternary({
+        'mode': 'lines', 'a': [0, 0.75, 0.75, 0], 'b': [1, 0.25, 0, 0], 'c': [0, 0, 0.25, 1],
+        'fill': 'toself', 'fillcolor': 'rgba(218, 112, 214, 0.5)', 'line': {'color': 'rgba(0,0,0,0)'},
+        'name': 'Arkose/Lithic Arkose', 'hoverinfo': 'name'
+    }))
+    fig.add_trace(go.Scatterternary({
+        'mode': 'lines', 'a': [0, 0.75, 0.75, 0], 'b': [0, 0, 0.25, 1], 'c': [1, 0.25, 0, 0],
+        'fill': 'toself', 'fillcolor': 'rgba(173, 216, 230, 0.5)', 'line': {'color': 'rgba(0,0,0,0)'},
+        'name': 'Lithic Arenite/Feldspathic Litharenite', 'hoverinfo': 'name'
+    }))
+
+
+    # Add the user's data point
+    fig.add_trace(go.Scatterternary({
+        'mode': 'markers',
+        'a': [q_norm],
+        'b': [f_norm],
+        'c': [l_norm],
+        'marker': {'symbol': 'star', 'color': 'red', 'size': 14, 'line': {'width': 1, 'color': 'black'}},
+        'name': 'Your Sample',
+        'hovertemplate': '<b>Your Sample</b><br>Q: %{a:.1%}<br>F: %{b:.1%}<br>L: %{c:.1%}<extra></extra>'
+    }))
+
+    # Add field labels
+    fig.add_annotation(x=0.5, y=0.9, text="<b>Quartz Arenite</b>", showarrow=False)
+    fig.add_annotation(x=0.7, y=0.2, text="<b>Subarkose</b>", showarrow=False)
+    fig.add_annotation(x=0.2, y=0.2, text="<b>Sublitharenite</b>", showarrow=False)
+    fig.add_annotation(x=0.8, y=-0.1, text="<b>Arkose</b>", showarrow=False)
+    fig.add_annotation(x=0.1, y=-0.1, text="<b>Lithic Arenite</b>", showarrow=False)
+
+    # Update layout
+    fig.update_layout({
+        'ternary': {
+            'sum': 1,
+            'aaxis': {'title': 'Q (Quartz)', 'min': 0, 'linewidth': 2, 'ticks': 'outside'},
+            'baxis': {'title': 'F (Feldspar)', 'min': 0, 'linewidth': 2, 'ticks': 'outside'},
+            'caxis': {'title': 'L (Lithic Fragments)', 'min': 0, 'linewidth': 2, 'ticks': 'outside'},
+        },
+        'annotations': [{'showarrow': False, 'text': 'Pettijohn (1975) Sandstone Classification', 'x': 0.5, 'y': 1.15, 'font': {'size': 16}}],
+        'showlegend': True,
+        'legend': {'itemsizing': 'constant', 'x': 1.1, 'y': 0.5}
+    })
+
+    return fig
 
 # --- UI MODULES ---
 # Each function below corresponds to a tool in the app.
@@ -132,24 +211,15 @@ def stereonet_plotter_ui():
         # Plot Plane as a Great Circle
         strike_rad = np.deg2rad(strike)
         dip_rad = np.deg2rad(dip)
-        pole_trend_rad = strike_rad - np.pi / 2
-        pole_plunge_rad = np.pi / 2 - dip_rad
         
-        g, d = np.meshgrid(np.linspace(0, 2 * np.pi, 360), np.linspace(0, np.pi/2, 90))
-        X = np.sin(g) * np.tan(d/2)
-        Y = np.cos(g) * np.tan(d/2)
-        
-        great_circle_theta = np.linspace(0, 2 * np.pi, 360)
-        great_circle_r = np.tan(np.pi/4 - dip_rad/2) * np.cos(great_circle_theta - (strike_rad - np.pi/2))
-        
-        # We need to calculate the great circle path correctly
+        # Calculate the great circle path correctly
         dip_direction_rad = strike_rad + np.pi / 2
         alpha = np.linspace(-np.pi/2, np.pi/2, 100)
         trend_great_circle = dip_direction_rad + np.arctan(np.tan(alpha) / np.cos(dip_rad))
         plunge_great_circle = np.arcsin(np.sin(alpha) * np.sin(dip_rad))
         
-        # Convert to polar coordinates for plotting
-        r_plane = np.tan(np.pi/4 - plunge_great_circle/2)
+        # Convert to polar coordinates for plotting (Schmidt net)
+        r_plane = np.sqrt(2) * np.sin(np.pi/4 - plunge_great_circle/2)
         theta_plane = trend_great_circle
         
         ax.plot(theta_plane, r_plane, label=f'Plane ({strike:.0f}/{dip:.0f})', color='b')
@@ -157,7 +227,7 @@ def stereonet_plotter_ui():
         # Plot Line as a Point
         trend_rad = np.deg2rad(trend)
         plunge_rad = np.deg2rad(plunge)
-        r_line = np.tan(np.pi/4 - plunge_rad/2)
+        r_line = np.sqrt(2) * np.sin(np.pi/4 - plunge_rad/2)
         ax.plot(trend_rad, r_line, 'ro', markersize=8, label=f'Line ({trend:.0f}/{plunge:.0f})')
 
         ax.legend()
