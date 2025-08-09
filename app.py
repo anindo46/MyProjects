@@ -349,12 +349,12 @@ def display_homepage():
     </style>
     """, unsafe_allow_html=True)
 
-    lottie_earth = load_lottie_url("https://lottie.host/89047e43-2487-46a3-8f03-6277695ba324/3jK5n9yHbt.json")
+    lottie_student = load_lottie_url("https://lottie.host/89f3a8e3-1383-4176-9a97-033f1723158c/1s3YVTE2sF.json")
 
     col1, col2 = st.columns([1, 2], gap="large")
     with col1:
-        if lottie_earth:
-            st_lottie(lottie_earth, height=350, speed=1, loop=True)
+        if lottie_student:
+            st_lottie(lottie_student, height=350, speed=1, loop=True)
         # If lottie fails, the warning from load_lottie_url will be shown, which is sufficient.
         # No need for a placeholder image.
 
