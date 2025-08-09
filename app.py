@@ -349,14 +349,14 @@ def display_homepage():
     </style>
     """, unsafe_allow_html=True)
 
-    lottie_earth = load_lottie_url("https://assets10.lottiefiles.com/packages/lf20_3ntisyuc.json")
+    lottie_earth = load_lottie_url("https://lottie.host/89047e43-2487-46a3-8f03-6277695ba324/3jK5n9yHbt.json")
 
     col1, col2 = st.columns([1, 2], gap="large")
     with col1:
         if lottie_earth:
             st_lottie(lottie_earth, height=350, speed=1, loop=True)
-        else:
-            st.image("https://placehold.co/400x400/1E90FF/FFFFFF?text=GeoLab\nPro", use_column_width=True)
+        # If lottie fails, the warning from load_lottie_url will be shown, which is sufficient.
+        # No need for a placeholder image.
 
     with col2:
         st.markdown('<h1 class="home-title">Welcome to GeoLab Pro</h1>', unsafe_allow_html=True)
@@ -384,7 +384,7 @@ def main():
     # Home button
     if st.sidebar.button("🏠 Home", use_container_width=True):
         st.session_state.selected_module = None
-        st.rerun() # Use st.rerun() instead of deprecated experimental_rerun
+        st.rerun()
 
     st.sidebar.subheader("Analysis Modules")
     
