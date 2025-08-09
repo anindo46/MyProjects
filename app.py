@@ -3,13 +3,10 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 import io
-
-# Import your qfl_mia_tool module (make sure it's in repo and has qfl_and_mia_tool function)
-from qfl_mia_tool import qfl_and_mia_tool
-
-# Lottie for animated logo
 from streamlit_lottie import st_lottie
 import requests
+
+from qfl_mia_tool import qfl_and_mia_tool  # Your custom tool
 
 def load_lottie_url(url):
     r = requests.get(url)
@@ -17,16 +14,14 @@ def load_lottie_url(url):
         return None
     return r.json()
 
-# Page config
 st.set_page_config(
     page_title="GeoLab Pro",
     layout="wide",
-    page_icon="🧪"
+    page_icon="🌍"
 )
 
-# Define modules: key=display name, value=internal id
 MODULES = {
-    "QFL & MIA Tool": "qfl_mia_tool",  # Your tool added first
+    "QFL & MIA Tool": "qfl_mia_tool",
     "Stereonet Plotter": "stereonet_plotter",
     "True Dip Calculator": "true_dip_calculator",
     "Porosity Calculator": "porosity_calculator",
@@ -35,7 +30,6 @@ MODULES = {
     "Grain Size to Phi": "grain_size_to_phi"
 }
 
-# Show and download helper for matplotlib figures
 def show_and_download(fig, filename="diagram.png"):
     st.pyplot(fig)
     buf = io.BytesIO()
@@ -47,11 +41,9 @@ def show_and_download(fig, filename="diagram.png"):
         mime="image/png"
     )
 
-# --- Module UIs ---
-
+# Your modules' UIs (same as before) ...
 def qfl_mia_tool_ui():
     st.header("QFL & MIA Tool")
-    # Call your imported function here
     qfl_and_mia_tool()
 
 def stereonet_plotter():
@@ -126,33 +118,81 @@ def grain_size_to_phi():
             phi = -math.log2(size)
             st.success(f"✅ φ = {phi:.2f}")
 
-# --- Homepage with geologic animated logo ---
-
+# --- New Homepage with animated Earth globe and student theme ---
 def display_homepage():
-    st.title("Welcome to GeoLab Pro")
+    st.markdown("""
+    <style>
+    .home-title {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #0A74DA;
+        margin-bottom: 0;
+    }
+    .home-subtitle {
+        font-size: 1.25rem;
+        margin-top: 0;
+        color: #444444;
+    }
+    .feature-list {
+        font-size: 1.1rem;
+        margin-top: 1rem;
+        list-style-type: none;
+        padding-left: 0;
+        color: #555555;
+    }
+    .feature-list li {
+        margin-bottom: 0.5rem;
+        padding-left: 25px;
+        position: relative;
+    }
+    .feature-list li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #0A74DA;
+        font-weight: bold;
+    }
+    .start-btn {
+        margin-top: 2rem;
+        font-size: 1.25rem;
+        background-color: #0A74DA;
+        color: white;
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .start-btn:hover {
+        background-color: #005bb5;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-    # Geologic animated Lottie logo
-    lottie_geo = load_lottie_url("https://assets4.lottiefiles.com/packages/lf20_jcikwtux.json")
+    lottie_earth = load_lottie_url("https://assets10.lottiefiles.com/packages/lf20_3ntisyuc.json")  # Animated Earth globe
 
     col1, col2 = st.columns([1, 2])
     with col1:
-        if lottie_geo:
-            st_lottie(lottie_geo, speed=1, loop=True, height=300)
+        if lottie_earth:
+            st_lottie(lottie_earth, height=350, speed=1, loop=True)
         else:
-            st.write("Geologic animated logo failed to load.")
+            st.write("Animated Earth failed to load.")
     with col2:
+        st.markdown('<h1 class="home-title">Welcome to GeoLab Pro</h1>', unsafe_allow_html=True)
+        st.markdown('<p class="home-subtitle">A student-friendly, professional toolkit for Geoscience enthusiasts.</p>', unsafe_allow_html=True)
         st.markdown("""
-            ### Your Professional Geoscience Toolkit
-            - Choose a tool from the sidebar or select one below to get started.
-            - Instant calculations, plots, and data export.
-        """)
+        <ul class="feature-list">
+            <li>Instant geological & geoscience calculations</li>
+            <li>Easy-to-use interface for students & researchers</li>
+            <li>Export results & visualizations</li>
+        </ul>
+        """, unsafe_allow_html=True)
 
-    selected = st.selectbox("Or select a module here:", list(MODULES.keys()))
-    if st.button("Start"):
-        st.session_state.selected_module = MODULES[selected]
-        st.experimental_rerun()
+        selected = st.selectbox("Or select a module here:", list(MODULES.keys()))
+        if st.button("Start Exploring"):
+            st.session_state.selected_module = MODULES[selected]
+            st.experimental_rerun()
 
-# Sidebar navigation when inside module
 def sidebar_navigation():
     st.sidebar.title("Modules")
     current = st.session_state.selected_module
@@ -166,7 +206,6 @@ def sidebar_navigation():
         st.session_state.selected_module = None
         st.experimental_rerun()
 
-# --- Main app ---
 def main():
     if "selected_module" not in st.session_state:
         st.session_state.selected_module = None
@@ -192,7 +231,6 @@ def main():
         elif mod == "grain_size_to_phi":
             grain_size_to_phi()
 
-    # Footer
     st.markdown("---")
     st.markdown("""
     <div style="text-align:center; font-size:12px; color:gray; padding:10px;">
