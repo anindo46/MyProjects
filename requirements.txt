@@ -1,5 +1,5 @@
 streamlit
 matplotlib
 numpy
-plotly
-pip install streamlit-lottie
+streamlit-lottie
+requests
