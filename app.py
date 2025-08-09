@@ -6,7 +6,7 @@ import io
 from streamlit_lottie import st_lottie
 import requests
 
-# --------- PAGE CONFIG -----------
+# -------------- PAGE CONFIG ----------------
 st.set_page_config(
     page_title="GeoLab Pro | By Anindo Paul Sourav",
     layout="wide",
@@ -14,7 +14,7 @@ st.set_page_config(
     page_icon="🧪"
 )
 
-# --------- LOAD LOTTIE -----------
+# -------------- LOAD LOTTIE -----------------
 def load_lottie_url(url):
     try:
         r = requests.get(url)
@@ -24,7 +24,7 @@ def load_lottie_url(url):
     except:
         return None
 
-# --------- FOOTER FUNCTION -----------
+# -------------- FOOTER -----------------------
 def footer():
     st.markdown("""
         <style>
@@ -42,7 +42,7 @@ def footer():
         </footer>
         """, unsafe_allow_html=True)
 
-# --------- MODULE LIST -----------
+# -------------- MODULES ----------------------
 MODULES = {
     "📊 MIA Tool": "mia_tool",
     "🧭 Stereonet Plotter": "stereonet_plotter",
@@ -53,7 +53,7 @@ MODULES = {
     "🌾 Grain Size to Phi": "grain_size_to_phi"
 }
 
-# --------- HELPER: SHOW & DOWNLOAD PLOT -----------
+# --------- HELPER: SHOW & DOWNLOAD PLOT -------
 def show_and_download(fig, filename="diagram.png"):
     st.pyplot(fig)
     buf = io.BytesIO()
@@ -65,36 +65,30 @@ def show_and_download(fig, filename="diagram.png"):
         mime="image/png"
     )
 
-# --------- TOOL UIs -----------
+# --------- MODULE UI FUNCTIONS -------------
 def mia_tool():
+    # You can import your qfl_mia_tool.py and call the function here instead if you want.
     st.subheader("📊 MIA Tool")
-    st.info("🚧 This module is coming soon! Stay tuned.")
+    st.info("🚧 Module under construction. Please check back soon!")
 
 def stereonet_plotter():
     st.subheader("🧭 Stereonet Plotter")
-    
     strike_plane = st.number_input("Strike of Plane (°)", 0.0, 360.0, step=1.0)
     dip_plane = st.number_input("Dip of Plane (°)", 0.0, 90.0, step=1.0)
     trend_line = st.number_input("Trend of Line (°)", 0.0, 360.0, step=1.0)
     plunge_line = st.number_input("Plunge of Line (°)", 0.0, 90.0, step=1.0)
-    
     calculate = st.button("🔍 Plot Stereonet")
-    
     if calculate:
         strike_plane_rad = math.radians(strike_plane)
         dip_plane_rad = math.radians(dip_plane)
         trend_line_rad = math.radians(trend_line)
         plunge_line_rad = math.radians(plunge_line)
-        
         fig = plt.figure(figsize=(7, 7))
         ax = fig.add_subplot(111, projection='polar')
-        
         ax.plot([strike_plane_rad, strike_plane_rad + math.pi], [dip_plane_rad, dip_plane_rad], label='Plane', color='b')
         ax.plot([trend_line_rad, trend_line_rad + math.pi], [plunge_line_rad, plunge_line_rad], label='Line', color='r')
-        
         ax.set_title("Stereonet Plot")
         ax.legend()
-        
         show_and_download(fig, "stereonet_plot.png")
 
 def true_dip_calculator():
@@ -104,12 +98,11 @@ def true_dip_calculator():
     calculate = st.button("🔍 Calculate True Dip")
     if calculate:
         if angle == 0:
-            st.error("Angle between directions must be > 0°")
+            st.error("Angle must be > 0°")
             return
         td = math.degrees(math.atan(math.tan(math.radians(ad)) / math.sin(math.radians(angle))))
         st.success(f"✅ True Dip = {td:.2f}°")
         st.markdown(r"**Formula:** True Dip = tan⁻¹(tan(Apparent Dip) / sin(Angle))")
-
         fig, ax = plt.subplots()
         ax.set_aspect('equal')
         b, h = 1, np.tan(np.radians(ad))
@@ -132,7 +125,6 @@ def porosity_calculator():
         solid = total - pores
         st.success(f"✅ Porosity = {porosity:.2f}%")
         st.markdown(r"**Formula:** Porosity = (Pore Volume / Total Volume) × 100")
-
         fig, ax = plt.subplots(figsize=(5, 2.5))
         ax.barh(["Rock"], [pores], color='skyblue', label="Pores")
         ax.barh(["Rock"], [solid], left=[pores], color='saddlebrown', label="Solids")
@@ -152,7 +144,6 @@ def stratigraphic_thickness_estimator():
         true_thick = measured * math.sin(math.radians(dip))
         st.success(f"✅ True Thickness = {true_thick:.2f} m")
         st.markdown(r"**Formula:** T = Measured × sin(Dip)")
-
         fig, ax = plt.subplots()
         ax.plot([0, 1], [0, measured], 'saddlebrown', lw=3, label='Measured')
         ax.plot([0, 1], [0, true_thick], 'limegreen', lw=3, label='True')
@@ -170,7 +161,6 @@ def slope_gradient():
         slope = (rise / run) * 100
         st.success(f"✅ Slope Gradient = {slope:.2f}%")
         st.markdown(r"**Formula:** Slope % = (Rise / Run) × 100")
-
         fig, ax = plt.subplots()
         ax.plot([0, run], [0, 0], 'k--')
         ax.plot([0, run], [0, rise], 'b-', lw=2)
@@ -190,7 +180,6 @@ def grain_size_to_phi():
         phi = -math.log2(size)
         st.success(f"✅ φ = {phi:.2f}")
         st.markdown(r"**Formula:** φ = –log₂(Grain Size in mm)")
-
         fig, ax = plt.subplots()
         ax.plot([size], [phi], marker='o', markersize=10, color='crimson')
         ax.set_xlabel("Grain Size (mm)")
@@ -199,8 +188,7 @@ def grain_size_to_phi():
         ax.grid(True)
         show_and_download(fig, "phi_diagram.png")
 
-# --------- HOMEPAGE WITH MODULE SELECTOR -----------
-
+# -------------- HOMEPAGE -----------------------
 def display_home():
     st.markdown(
         """
@@ -209,43 +197,54 @@ def display_home():
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 70vh;
+            height: 80vh;
             gap: 3rem;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #0B3954;
         }
         .left-section {
             flex: 1;
-            max-width: 350px;
+            max-width: 400px;
         }
         .right-section {
             flex: 1;
-            max-width: 500px;
+            max-width: 550px;
         }
         h1 {
-            color: #1F77B4;
-            font-weight: 700;
-            font-size: 3rem;
+            font-weight: 800;
+            font-size: 3.5rem;
             margin-bottom: 0.5rem;
+            color: #1F77B4;
         }
         p.lead {
-            font-size: 1.25rem;
-            color: #333333;
-            margin-bottom: 1.5rem;
-            line-height: 1.5;
-        }
-        .select-container {
-            margin-top: 2rem;
+            font-size: 1.4rem;
+            color: #333;
+            margin-bottom: 2rem;
+            line-height: 1.6;
         }
         .stSelectbox > div {
-            background-color: #f0f4f8;
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-size: 1.1rem;
+            background-color: #e3f2fd;
+            border-radius: 10px;
+            padding: 14px 22px;
+            font-size: 1.15rem;
             font-weight: 600;
             color: #0B3954;
         }
+        button.css-1q8dd3e.edgvbvh3 {
+            background-color: #1F77B4 !important;
+            color: white !important;
+            font-weight: 700 !important;
+            padding: 12px 25px !important;
+            border-radius: 10px !important;
+            box-shadow: 0 4px 8px rgb(31 119 180 / 0.4);
+            transition: all 0.3s ease;
+        }
+        button.css-1q8dd3e.edgvbvh3:hover {
+            background-color: #145A86 !important;
+        }
         </style>
-        """, unsafe_allow_html=True
+        """,
+        unsafe_allow_html=True
     )
 
     col1, col2 = st.columns([1, 1])
@@ -264,26 +263,33 @@ def display_home():
             st.session_state["selected_module"] = MODULES[selected_module]
     return None
 
-# --------- SIDEBAR MODULE UI -----------
-
+# -------------- SIDEBAR MODULE UI --------------
 def sidebar_module_ui():
+    # Make sure key exists to avoid KeyError
+    if "selected_module" not in st.session_state or st.session_state["selected_module"] is None:
+        return
+
     st.sidebar.title("🔧 GeoLab Pro Modules")
     selected_mod_key = None
-    # Find key from session state module code
     for k, v in MODULES.items():
         if v == st.session_state["selected_module"]:
             selected_mod_key = k
             break
-    # Module selector in sidebar to switch module
-    new_selection = st.sidebar.selectbox("Switch Module", list(MODULES.keys()), index=list(MODULES.keys()).index(selected_mod_key))
+
+    new_selection = st.sidebar.selectbox(
+        "Switch Module",
+        list(MODULES.keys()),
+        index=list(MODULES.keys()).index(selected_mod_key)
+    )
     if MODULES[new_selection] != st.session_state["selected_module"]:
         st.session_state["selected_module"] = MODULES[new_selection]
-    
+
     st.sidebar.markdown("---")
     if st.sidebar.button("🏠 Back to Home"):
-        del st.session_state["selected_module"]
+        st.session_state["selected_module"] = None
+        st.experimental_rerun()  # Forces rerun immediately
 
-    # Show the selected module UI here
+    # Render module UI
     module = st.session_state["selected_module"]
     if module == "mia_tool":
         mia_tool()
@@ -300,17 +306,14 @@ def sidebar_module_ui():
     elif module == "grain_size_to_phi":
         grain_size_to_phi()
 
-# --------- MAIN -----------
+# -------------- MAIN --------------
 def main():
-    # Initialize session state for module if not exists
     if "selected_module" not in st.session_state:
         st.session_state["selected_module"] = None
 
     if st.session_state["selected_module"] is None:
-        # Show homepage with module selector
         display_home()
     else:
-        # Show sidebar with module UI and hide homepage content
         sidebar_module_ui()
 
     footer()
