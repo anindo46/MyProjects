@@ -126,27 +126,31 @@ def grain_size_to_phi():
             phi = -math.log2(size)
             st.success(f"✅ φ = {phi:.2f}")
 
-# --- Homepage with 3D animated logo ---
+# --- Homepage with geologic animated logo ---
 
 def display_homepage():
     st.title("Welcome to GeoLab Pro")
-    lottie_3d = load_lottie_url("https://assets3.lottiefiles.com/packages/lf20_tll0j4bb.json")  # 3D animation
+
+    # Geologic animated Lottie logo
+    lottie_geo = load_lottie_url("https://assets4.lottiefiles.com/packages/lf20_jcikwtux.json")
+
     col1, col2 = st.columns([1, 2])
     with col1:
-        if lottie_3d:
-            st_lottie(lottie_3d, speed=1, loop=True, height=300)
+        if lottie_geo:
+            st_lottie(lottie_geo, speed=1, loop=True, height=300)
         else:
-            st.write("3D logo animation failed to load.")
+            st.write("Geologic animated logo failed to load.")
     with col2:
         st.markdown("""
             ### Your Professional Geoscience Toolkit
             - Choose a tool from the sidebar or select one below to get started.
             - Instant calculations, plots, and data export.
         """)
-        selected = st.selectbox("Or select a module here:", list(MODULES.keys()))
-        if st.button("Start"):
-            st.session_state.selected_module = MODULES[selected]
-            st.experimental_rerun()
+
+    selected = st.selectbox("Or select a module here:", list(MODULES.keys()))
+    if st.button("Start"):
+        st.session_state.selected_module = MODULES[selected]
+        st.experimental_rerun()
 
 # Sidebar navigation when inside module
 def sidebar_navigation():
