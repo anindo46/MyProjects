@@ -3,320 +3,190 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 import io
-from streamlit_lottie import st_lottie
-import requests
 
-# -------------- PAGE CONFIG ----------------
+# Page configuration
 st.set_page_config(
-    page_title="GeoLab Pro | By Anindo Paul Sourav",
+    page_title="GeoLab Pro | Geoscience Toolkit",
     layout="wide",
     initial_sidebar_state="collapsed",
     page_icon="🧪"
 )
 
-# -------------- LOAD LOTTIE -----------------
-def load_lottie_url(url):
-    try:
-        r = requests.get(url)
-        if r.status_code != 200:
-            return None
-        return r.json()
-    except:
-        return None
-
-# -------------- FOOTER -----------------------
-def footer():
-    st.markdown("""
-        <style>
-            footer {
-                visibility: visible;
-                text-align: center;
-                padding: 10px 0px;
-                color: #888888;
-                font-size: 12px;
-                margin-top: 3rem;
-            }
-        </style>
-        <footer>
-            Developed with ❤️ by <b>Anindo Paul Sourav</b> — University of Barishal
-        </footer>
-        """, unsafe_allow_html=True)
-
-# -------------- MODULES ----------------------
+# Modules dictionary: key = display name, value = internal code
 MODULES = {
-    "📊 MIA Tool": "mia_tool",
-    "🧭 Stereonet Plotter": "stereonet_plotter",
-    "🧭 True Dip Calculator": "true_dip_calculator",
-    "🪨 Porosity Calculator": "porosity_calculator",
-    "📏 Stratigraphic Thickness Estimator": "stratigraphic_thickness_estimator",
-    "⛰️ Slope Gradient (%)": "slope_gradient",
-    "🌾 Grain Size to Phi": "grain_size_to_phi"
+    "MIA Tool": "mia_tool",
+    "Stereonet Plotter": "stereonet_plotter",
+    "True Dip Calculator": "true_dip_calculator",
+    "Porosity Calculator": "porosity_calculator",
+    "Stratigraphic Thickness Estimator": "stratigraphic_thickness_estimator",
+    "Slope Gradient (%)": "slope_gradient",
+    "Grain Size to Phi": "grain_size_to_phi"
 }
 
-# --------- HELPER: SHOW & DOWNLOAD PLOT -------
+# ----------- HELPER: Show & Download Plot ------------
 def show_and_download(fig, filename="diagram.png"):
     st.pyplot(fig)
     buf = io.BytesIO()
     fig.savefig(buf, format="png", bbox_inches='tight')
     st.download_button(
-        label="📥 Download Diagram as PNG",
+        label="Download Diagram as PNG",
         data=buf.getvalue(),
         file_name=filename,
         mime="image/png"
     )
 
-# --------- MODULE UI FUNCTIONS -------------
+# ----------- MODULE IMPLEMENTATIONS ------------------
+
 def mia_tool():
-    # You can import your qfl_mia_tool.py and call the function here instead if you want.
-    st.subheader("📊 MIA Tool")
-    st.info("🚧 Module under construction. Please check back soon!")
+    st.header("MIA Tool")
+    st.info("MIA Tool is under development. Stay tuned!")
 
 def stereonet_plotter():
-    st.subheader("🧭 Stereonet Plotter")
-    strike_plane = st.number_input("Strike of Plane (°)", 0.0, 360.0, step=1.0)
-    dip_plane = st.number_input("Dip of Plane (°)", 0.0, 90.0, step=1.0)
-    trend_line = st.number_input("Trend of Line (°)", 0.0, 360.0, step=1.0)
-    plunge_line = st.number_input("Plunge of Line (°)", 0.0, 90.0, step=1.0)
-    calculate = st.button("🔍 Plot Stereonet")
-    if calculate:
-        strike_plane_rad = math.radians(strike_plane)
-        dip_plane_rad = math.radians(dip_plane)
-        trend_line_rad = math.radians(trend_line)
-        plunge_line_rad = math.radians(plunge_line)
-        fig = plt.figure(figsize=(7, 7))
+    st.header("Stereonet Plotter")
+    strike = st.number_input("Strike (°)", 0.0, 360.0)
+    dip = st.number_input("Dip (°)", 0.0, 90.0)
+    trend = st.number_input("Trend (°)", 0.0, 360.0)
+    plunge = st.number_input("Plunge (°)", 0.0, 90.0)
+    if st.button("Plot Stereonet"):
+        strike_rad = math.radians(strike)
+        dip_rad = math.radians(dip)
+        trend_rad = math.radians(trend)
+        plunge_rad = math.radians(plunge)
+
+        fig = plt.figure(figsize=(6,6))
         ax = fig.add_subplot(111, projection='polar')
-        ax.plot([strike_plane_rad, strike_plane_rad + math.pi], [dip_plane_rad, dip_plane_rad], label='Plane', color='b')
-        ax.plot([trend_line_rad, trend_line_rad + math.pi], [plunge_line_rad, plunge_line_rad], label='Line', color='r')
-        ax.set_title("Stereonet Plot")
+        ax.plot([strike_rad, strike_rad + math.pi], [dip_rad, dip_rad], label="Plane", color="blue")
+        ax.plot([trend_rad, trend_rad + math.pi], [plunge_rad, plunge_rad], label="Line", color="red")
+        ax.set_title("Stereonet")
         ax.legend()
         show_and_download(fig, "stereonet_plot.png")
 
 def true_dip_calculator():
-    st.subheader("🧭 True Dip from Apparent Dip")
-    ad = st.number_input("Apparent Dip (°)", 0.0, step=0.1)
-    angle = st.number_input("Angle Between Directions (°)", 0.0, 90.0, step=0.1)
-    calculate = st.button("🔍 Calculate True Dip")
-    if calculate:
+    st.header("True Dip Calculator")
+    apparent_dip = st.number_input("Apparent Dip (°)", 0.0)
+    angle = st.number_input("Angle Between Directions (°)", 0.0, 90.0)
+    if st.button("Calculate True Dip"):
         if angle == 0:
-            st.error("Angle must be > 0°")
-            return
-        td = math.degrees(math.atan(math.tan(math.radians(ad)) / math.sin(math.radians(angle))))
-        st.success(f"✅ True Dip = {td:.2f}°")
-        st.markdown(r"**Formula:** True Dip = tan⁻¹(tan(Apparent Dip) / sin(Angle))")
-        fig, ax = plt.subplots()
-        ax.set_aspect('equal')
-        b, h = 1, np.tan(np.radians(ad))
-        x, y = [0, b, b], [0, 0, h]
-        ax.plot(x + [0], y + [0], 'k-', lw=2)
-        ax.fill(x + [0], y + [0], 'lavender', alpha=0.5)
-        ax.text(0.5, -0.1, f"Angle = {angle}°", ha='center')
-        ax.text(b+0.1, h/2, f"Apparent = {ad}°", va='center')
-        ax.text(b/2, h+0.1, f"True Dip = {td:.2f}°", ha='center', fontweight='bold')
-        ax.axis('off')
-        show_and_download(fig, "true_dip_diagram.png")
+            st.error("Angle must be greater than 0")
+        else:
+            true_dip = math.degrees(math.atan(math.tan(math.radians(apparent_dip)) / math.sin(math.radians(angle))))
+            st.success(f"True Dip: {true_dip:.2f}°")
 
 def porosity_calculator():
-    st.subheader("🪨 Porosity % from Volume")
-    pores = st.number_input("Pore Volume (cm³)", 0.0, step=0.1)
-    total = st.number_input("Total Volume (cm³)", 0.0, step=0.1)
-    calculate = st.button("🔍 Calculate Porosity")
-    if total > 0 and calculate:
-        porosity = (pores / total) * 100
-        solid = total - pores
-        st.success(f"✅ Porosity = {porosity:.2f}%")
-        st.markdown(r"**Formula:** Porosity = (Pore Volume / Total Volume) × 100")
-        fig, ax = plt.subplots(figsize=(5, 2.5))
-        ax.barh(["Rock"], [pores], color='skyblue', label="Pores")
-        ax.barh(["Rock"], [solid], left=[pores], color='saddlebrown', label="Solids")
-        ax.set_xlim(0, total)
-        ax.legend(loc="lower right")
-        ax.set_title("Pore vs Solid Distribution")
-        ax.set_facecolor('#f4f4f4')
-        ax.get_yaxis().set_visible(False)
-        show_and_download(fig, "porosity_diagram.png")
+    st.header("Porosity Calculator")
+    pore_vol = st.number_input("Pore Volume (cm³)", 0.0)
+    total_vol = st.number_input("Total Volume (cm³)", 0.0)
+    if st.button("Calculate Porosity"):
+        if total_vol == 0:
+            st.error("Total volume must be greater than 0")
+        else:
+            porosity = (pore_vol / total_vol) * 100
+            st.success(f"Porosity: {porosity:.2f}%")
 
 def stratigraphic_thickness_estimator():
-    st.subheader("📏 Stratigraphic Thickness Estimation")
-    measured = st.number_input("Measured Thickness (m)", 0.0, step=0.1)
-    dip = st.number_input("Dip Angle (°)", 0.0, 90.0, step=0.1)
-    calculate = st.button("🔍 Calculate True Thickness")
-    if dip > 0 and calculate:
-        true_thick = measured * math.sin(math.radians(dip))
-        st.success(f"✅ True Thickness = {true_thick:.2f} m")
-        st.markdown(r"**Formula:** T = Measured × sin(Dip)")
-        fig, ax = plt.subplots()
-        ax.plot([0, 1], [0, measured], 'saddlebrown', lw=3, label='Measured')
-        ax.plot([0, 1], [0, true_thick], 'limegreen', lw=3, label='True')
-        ax.legend()
-        ax.set_title("Measured vs. True Thickness")
-        ax.set_ylabel("Thickness (m)")
-        show_and_download(fig, "stratigraphy_diagram.png")
+    st.header("Stratigraphic Thickness Estimator")
+    measured_thickness = st.number_input("Measured Thickness (m)", 0.0)
+    dip_angle = st.number_input("Dip Angle (°)", 0.0, 90.0)
+    if st.button("Calculate True Thickness"):
+        true_thickness = measured_thickness * math.sin(math.radians(dip_angle))
+        st.success(f"True Thickness: {true_thickness:.2f} m")
 
 def slope_gradient():
-    st.subheader("⛰️ Slope Gradient (%)")
-    rise = st.number_input("Vertical Rise (m)", 0.0, step=0.1)
-    run = st.number_input("Horizontal Run (m)", 0.0, step=0.1)
-    calculate = st.button("🔍 Calculate Slope Gradient")
-    if run > 0 and calculate:
-        slope = (rise / run) * 100
-        st.success(f"✅ Slope Gradient = {slope:.2f}%")
-        st.markdown(r"**Formula:** Slope % = (Rise / Run) × 100")
-        fig, ax = plt.subplots()
-        ax.plot([0, run], [0, 0], 'k--')
-        ax.plot([0, run], [0, rise], 'b-', lw=2)
-        ax.fill([0, run, run], [0, 0, rise], color='skyblue', alpha=0.3)
-        ax.text(run/2, rise/2, f"{slope:.1f}%", fontsize=10, ha='center')
-        ax.set_xlim(0, run+1)
-        ax.set_ylim(0, rise+1)
-        ax.set_title("Slope Profile")
-        ax.axis('off')
-        show_and_download(fig, "slope_diagram.png")
+    st.header("Slope Gradient Calculator")
+    vertical_rise = st.number_input("Vertical Rise (m)", 0.0)
+    horizontal_run = st.number_input("Horizontal Run (m)", 0.0)
+    if st.button("Calculate Slope Gradient"):
+        if horizontal_run == 0:
+            st.error("Horizontal run must be greater than 0")
+        else:
+            slope = (vertical_rise / horizontal_run) * 100
+            st.success(f"Slope Gradient: {slope:.2f}%")
 
 def grain_size_to_phi():
-    st.subheader("🌾 Grain Size to Phi (φ)")
-    size = st.number_input("Grain Size (mm)", 0.0, step=0.01)
-    calculate = st.button("🔍 Calculate Phi")
-    if size > 0 and calculate:
-        phi = -math.log2(size)
-        st.success(f"✅ φ = {phi:.2f}")
-        st.markdown(r"**Formula:** φ = –log₂(Grain Size in mm)")
-        fig, ax = plt.subplots()
-        ax.plot([size], [phi], marker='o', markersize=10, color='crimson')
-        ax.set_xlabel("Grain Size (mm)")
-        ax.set_ylabel("Phi (φ)")
-        ax.set_title("Grain Size → φ Scale")
-        ax.grid(True)
-        show_and_download(fig, "phi_diagram.png")
+    st.header("Grain Size to Phi (φ) Calculator")
+    grain_size = st.number_input("Grain Size (mm)", 0.0)
+    if st.button("Calculate Phi"):
+        if grain_size <= 0:
+            st.error("Grain size must be greater than 0")
+        else:
+            phi = -math.log2(grain_size)
+            st.success(f"Phi (φ) = {phi:.2f}")
 
-# -------------- HOMEPAGE -----------------------
-def display_home():
+# ----------- DISPLAY HOME PAGE ------------------------
+
+def display_homepage():
+    st.title("Welcome to GeoLab Pro")
+    st.write(
+        """
+        A clean, simple, and professional geoscience toolkit.
+        
+        Select a module below to begin your analysis.
+        """
+    )
+    module = st.selectbox("Select a Module", list(MODULES.keys()))
+    if st.button("Start"):
+        st.session_state.selected_module = MODULES[module]
+        st.experimental_rerun()
+
+# ----------- SIDEBAR WITH MODULE NAVIGATION -------------
+
+def sidebar_navigation():
+    st.sidebar.title("Modules")
+    current_module = st.session_state.selected_module
+
+    selected = st.sidebar.selectbox(
+        "Switch Module",
+        list(MODULES.keys()),
+        index=list(MODULES.values()).index(current_module)
+    )
+    if MODULES[selected] != current_module:
+        st.session_state.selected_module = MODULES[selected]
+        st.experimental_rerun()
+
+    st.sidebar.markdown("---")
+    if st.sidebar.button("Back to Home"):
+        st.session_state.selected_module = None
+        st.experimental_rerun()
+
+# ----------- MAIN APP LOGIC -----------------------------
+
+def main():
+    if "selected_module" not in st.session_state:
+        st.session_state.selected_module = None
+
+    if st.session_state.selected_module is None:
+        display_homepage()
+    else:
+        sidebar_navigation()
+
+        # Call the right module UI function
+        mod = st.session_state.selected_module
+        if mod == "mia_tool":
+            mia_tool()
+        elif mod == "stereonet_plotter":
+            stereonet_plotter()
+        elif mod == "true_dip_calculator":
+            true_dip_calculator()
+        elif mod == "porosity_calculator":
+            porosity_calculator()
+        elif mod == "stratigraphic_thickness_estimator":
+            stratigraphic_thickness_estimator()
+        elif mod == "slope_gradient":
+            slope_gradient()
+        elif mod == "grain_size_to_phi":
+            grain_size_to_phi()
+
+    # Footer
+    st.markdown("---")
     st.markdown(
         """
-        <style>
-        .main-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 80vh;
-            gap: 3rem;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #0B3954;
-        }
-        .left-section {
-            flex: 1;
-            max-width: 400px;
-        }
-        .right-section {
-            flex: 1;
-            max-width: 550px;
-        }
-        h1 {
-            font-weight: 800;
-            font-size: 3.5rem;
-            margin-bottom: 0.5rem;
-            color: #1F77B4;
-        }
-        p.lead {
-            font-size: 1.4rem;
-            color: #333;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-        .stSelectbox > div {
-            background-color: #e3f2fd;
-            border-radius: 10px;
-            padding: 14px 22px;
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: #0B3954;
-        }
-        button.css-1q8dd3e.edgvbvh3 {
-            background-color: #1F77B4 !important;
-            color: white !important;
-            font-weight: 700 !important;
-            padding: 12px 25px !important;
-            border-radius: 10px !important;
-            box-shadow: 0 4px 8px rgb(31 119 180 / 0.4);
-            transition: all 0.3s ease;
-        }
-        button.css-1q8dd3e.edgvbvh3:hover {
-            background-color: #145A86 !important;
-        }
-        </style>
+        <div style="text-align:center; color:gray; font-size:12px; padding:10px 0;">
+            Developed by Anindo Paul Sourav — University of Barishal
+        </div>
         """,
         unsafe_allow_html=True
     )
 
-    col1, col2 = st.columns([1, 1])
-    with col1:
-        lottie_json = load_lottie_url("https://assets2.lottiefiles.com/packages/lf20_jcikwtux.json")
-        if lottie_json:
-            st_lottie(lottie_json, speed=1, loop=True, height=350)
-        else:
-            st.image("https://raw.githubusercontent.com/anindo46/MyProjects/refs/heads/main/pngwing.com.png", width=300)
-    with col2:
-        st.markdown("<h1>Welcome to GeoLab Pro</h1>", unsafe_allow_html=True)
-        st.markdown('<p class="lead">A comprehensive and professional geoscience toolkit, crafted for students and researchers.<br> Choose your desired module below to begin.</p>', unsafe_allow_html=True)
-        selected_module = st.selectbox("📦 Select a Module to Start", list(MODULES.keys()), index=0, key="module_select_home")
-        start_button = st.button("➡️ Start")
-        if start_button:
-            st.session_state["selected_module"] = MODULES[selected_module]
-    return None
-
-# -------------- SIDEBAR MODULE UI --------------
-def sidebar_module_ui():
-    # Make sure key exists to avoid KeyError
-    if "selected_module" not in st.session_state or st.session_state["selected_module"] is None:
-        return
-
-    st.sidebar.title("🔧 GeoLab Pro Modules")
-    selected_mod_key = None
-    for k, v in MODULES.items():
-        if v == st.session_state["selected_module"]:
-            selected_mod_key = k
-            break
-
-    new_selection = st.sidebar.selectbox(
-        "Switch Module",
-        list(MODULES.keys()),
-        index=list(MODULES.keys()).index(selected_mod_key)
-    )
-    if MODULES[new_selection] != st.session_state["selected_module"]:
-        st.session_state["selected_module"] = MODULES[new_selection]
-
-    st.sidebar.markdown("---")
-    if st.sidebar.button("🏠 Back to Home"):
-        st.session_state["selected_module"] = None
-        st.experimental_rerun()  # Forces rerun immediately
-
-    # Render module UI
-    module = st.session_state["selected_module"]
-    if module == "mia_tool":
-        mia_tool()
-    elif module == "stereonet_plotter":
-        stereonet_plotter()
-    elif module == "true_dip_calculator":
-        true_dip_calculator()
-    elif module == "porosity_calculator":
-        porosity_calculator()
-    elif module == "stratigraphic_thickness_estimator":
-        stratigraphic_thickness_estimator()
-    elif module == "slope_gradient":
-        slope_gradient()
-    elif module == "grain_size_to_phi":
-        grain_size_to_phi()
-
-# -------------- MAIN --------------
-def main():
-    if "selected_module" not in st.session_state:
-        st.session_state["selected_module"] = None
-
-    if st.session_state["selected_module"] is None:
-        display_home()
-    else:
-        sidebar_module_ui()
-
-    footer()
 
 if __name__ == "__main__":
     main()
